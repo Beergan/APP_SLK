@@ -14,7 +14,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1><i class="bi bi-people-fill me-2"></i>Staff Management</h1>
                 <div>
-                    <button class="btn btn-success me-2" @onclick="() => Navigation.NavigateTo("/staff/checkin")">
+                    <button class="btn btn-success me-2" @onclick='() => Navigation.NavigateTo("/staff/checkin")'>
                         <i class="bi bi-clock-in"></i> Check In/Out
                     </button>
                     <button class="btn btn-primary" @onclick="ShowCreateModal">
@@ -312,29 +312,29 @@
     {
         if (staffList == null) return;
 
-        filteredStaff = staffList.AsEnumerable();
+        filteredStaff = staffList.ToList();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             filteredStaff = filteredStaff.Where(s => 
                 s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         if (!string.IsNullOrEmpty(statusFilter))
         {
             filteredStaff = statusFilter switch
             {
-                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking),
-                "active" => filteredStaff.Where(s => s.IsActive),
-                "inactive" => filteredStaff.Where(s => !s.IsActive),
+                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking).ToList(),
+                "active" => filteredStaff.Where(s => s.IsActive).ToList(),
+                "inactive" => filteredStaff.Where(s => !s.IsActive).ToList(),
                 _ => filteredStaff
             };
         }
 
         if (!string.IsNullOrEmpty(roleFilter))
         {
-            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter);
+            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter).ToList();
         }
 
         filteredStaff = filteredStaff.ToList();
@@ -370,7 +370,6 @@
 
     private async Task DeleteStaff(Guid id)
     {
-        // TODO: Implement delete confirmation and API call
         Console.WriteLine($"Delete staff with ID: {id}");
     }
 } 
