@@ -3,38 +3,69 @@
 
 <PageTitle>Weather</PageTitle>
 
-<h1>Weather</h1>
+<div class="md-container">
+    <div class="md-row">
+        <div class="md-col-12">
+            <h1 class="md-d-flex md-align-items-center md-mb-4">
+                <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">wb_sunny</span>
+                Weather
+            </h1>
 
-<p>This component demonstrates showing data.</p>
+            <p style="color: var(--md-gray-600);">This component demonstrates showing data.</p>
+        </div>
+    </div>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    @if (forecasts == null)
+    {
+        <div class="md-loading">
+            <div class="md-spinner"></div>
+        </div>
+    }
+    else
+    {
+        <div class="md-row">
+            <div class="md-col-12">
+                <div class="md-card">
+                    <div class="md-card-body">
+                        <div style="overflow-x: auto;">
+                            <table class="md-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Temp. (C)</th>
+                                        <th>Temp. (F)</th>
+                                        <th>Summary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var forecast in forecasts)
+                                    {
+                                        <tr>
+                                            <td>@forecast.Date.ToShortDateString()</td>
+                                            <td>
+                                                <span class="md-chip" style="background-color: rgba(25, 118, 210, 0.1); color: var(--md-primary);">
+                                                    @forecast.TemperatureC°C
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="md-chip" style="background-color: rgba(76, 175, 80, 0.1); color: var(--md-success);">
+                                                    @forecast.TemperatureF°F
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="md-chip md-chip-primary">@forecast.Summary</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     private WeatherForecast[]? forecasts;

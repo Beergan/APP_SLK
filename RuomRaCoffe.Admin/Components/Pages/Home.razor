@@ -4,46 +4,213 @@
 @using RuomRaCoffe.API.Data.Entities;
 <PageTitle>Dashboard</PageTitle>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mb-4">Dashboard</h1>
+<div class="md-container">
+    <!-- Hero Section -->
+    <div class="md-row md-mb-5">
+        <div class="md-col-12">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-primary), var(--md-primary-dark)); color: white; padding: 2rem;">
+                <div class="md-d-flex md-justify-content-between md-align-items-center">
+                    <div>
+                        <h1 class="md-font-size-4xl md-mb-2">Welcome to RuomRa Coffee Admin</h1>
+                        <p style="font-size: var(--md-font-size-lg); opacity: 0.9;">Manage your coffee shop operations efficiently</p>
+                    </div>
+                    <div class="md-d-none md-d-md-block">
+                        <span class="material-icons md-font-size-5xl" style="opacity: 0.3;">coffee</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-3 mb-4">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Users</h5>
-                    <h2 class="card-text">@(users?.Count ?? 0)</h2>
+    <!-- Statistics Cards with Enhanced Design -->
+    <div class="md-row md-mb-5">
+        <div class="md-col-3 md-mb-4">
+            <div class="md-card dashboard-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; position: relative; overflow: hidden;">
+                <div class="card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
+                        <div>
+                            <h5 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Total Users</h5>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(users?.Count ?? 0)</h2>
+                            <small style="opacity: 0.8;">Active accounts</small>
+                        </div>
+                        <div class="md-align-self-center">
+                            <div class="icon-circle" style="background: rgba(255,255,255,0.2);">
+                                <span class="material-icons md-font-size-3xl">people</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Products</h5>
-                    <h2 class="card-text">@(products?.Count ?? 0)</h2>
+        <div class="md-col-3 md-mb-4">
+            <div class="md-card dashboard-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; position: relative; overflow: hidden;">
+                <div class="card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
+                        <div>
+                            <h5 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Total Products</h5>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(products?.Count ?? 0)</h2>
+                            <small style="opacity: 0.8;">Available items</small>
+                        </div>
+                        <div class="md-align-self-center">
+                            <div class="icon-circle" style="background: rgba(255,255,255,0.2);">
+                                <span class="material-icons md-font-size-3xl">inventory</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Total Orders</h5>
-                    <h2 class="card-text">@(orders?.Count ?? 0)</h2>
+        <div class="md-col-3 md-mb-4">
+            <div class="md-card dashboard-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; position: relative; overflow: hidden;">
+                <div class="card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
+                        <div>
+                            <h5 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Total Orders</h5>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(orders?.Count ?? 0)</h2>
+                            <small style="opacity: 0.8;">Processed today</small>
+                        </div>
+                        <div class="md-align-self-center">
+                            <div class="icon-circle" style="background: rgba(255,255,255,0.2);">
+                                <span class="material-icons md-font-size-3xl">shopping_cart</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <h5 class="card-title">Revenue</h5>
-                    <h2 class="card-text">$@(totalRevenue?.ToString("N0") ?? "0")</h2>
+        <div class="md-col-3 md-mb-4">
+            <div class="md-card dashboard-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; position: relative; overflow: hidden;">
+                <div class="card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
+                        <div>
+                            <h5 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Revenue</h5>
+                            <h2 class="md-mb-0 md-font-size-3xl">$@(totalRevenue?.ToString("N0") ?? "0")</h2>
+                            <small style="opacity: 0.8;">This month</small>
+                        </div>
+                        <div class="md-align-self-center">
+                            <div class="icon-circle" style="background: rgba(255,255,255,0.2);">
+                                <span class="material-icons md-font-size-3xl">attach_money</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="md-row md-mb-5">
+        <div class="md-col-12">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h4 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">flash_on</span>
+                        Quick Actions
+                    </h4>
+                </div>
+                <div class="md-card-body">
+                    <div class="md-row">
+                        <div class="md-col-3 md-mb-3">
+                            <button class="md-btn md-btn-outlined quick-action-btn" style="width: 100%; height: 80px; flex-direction: column;">
+                                <span class="material-icons md-font-size-2xl md-mb-2">people</span>
+                                <span>Manage Staff</span>
+                            </button>
+                        </div>
+                        <div class="md-col-3 md-mb-3">
+                            <button class="md-btn md-btn-outlined quick-action-btn" style="width: 100%; height: 80px; flex-direction: column;">
+                                <span class="material-icons md-font-size-2xl md-mb-2">schedule</span>
+                                <span>Check In/Out</span>
+                            </button>
+                        </div>
+                        <div class="md-col-3 md-mb-3">
+                            <button class="md-btn md-btn-outlined quick-action-btn" style="width: 100%; height: 80px; flex-direction: column;">
+                                <span class="material-icons md-font-size-2xl md-mb-2">inventory</span>
+                                <span>Products</span>
+                            </button>
+                        </div>
+                        <div class="md-col-3 md-mb-3">
+                            <button class="md-btn md-btn-outlined quick-action-btn" style="width: 100%; height: 80px; flex-direction: column;">
+                                <span class="material-icons md-font-size-2xl md-mb-2">analytics</span>
+                                <span>Reports</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="md-row">
+        <div class="md-col-8 md-mb-4">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h4 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">timeline</span>
+                        Recent Activity
+                    </h4>
+                </div>
+                <div class="md-card-body">
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--md-success);">
+                                <span class="material-icons">check_circle</span>
+                            </div>
+                            <div class="activity-content">
+                                <h6 class="md-mb-0">New order received</h6>
+                                <small style="color: var(--md-gray-600);">Order #1234 - 2 minutes ago</small>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--md-info);">
+                                <span class="material-icons">person_add</span>
+                            </div>
+                            <div class="activity-content">
+                                <h6 class="md-mb-0">New staff member added</h6>
+                                <small style="color: var(--md-gray-600);">John Doe - 15 minutes ago</small>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--md-warning);">
+                                <span class="material-icons">inventory_2</span>
+                            </div>
+                            <div class="activity-content">
+                                <h6 class="md-mb-0">Low stock alert</h6>
+                                <small style="color: var(--md-gray-600);">Coffee beans - 1 hour ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="md-col-4 md-mb-4">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h4 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">notifications</span>
+                        Notifications
+                    </h4>
+                </div>
+                <div class="md-card-body">
+                    <div class="notification-item">
+                        <span class="material-icons" style="color: var(--md-success); margin-right: 0.5rem;">circle</span>
+                        <span>System running smoothly</span>
+                    </div>
+                    <div class="notification-item">
+                        <span class="material-icons" style="color: var(--md-warning); margin-right: 0.5rem;">circle</span>
+                        <span>3 items low in stock</span>
+                    </div>
+                    <div class="notification-item">
+                        <span class="material-icons" style="color: var(--md-info); margin-right: 0.5rem;">circle</span>
+                        <span>5 new orders pending</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,13 +218,119 @@
 
     @if (isLoading)
     {
-        <div class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+        <div class="md-loading">
+            <div class="md-spinner"></div>
         </div>
     }
 </div>
+
+<style>
+    .dashboard-card {
+        transition: all 0.3s ease;
+        transform: translateY(0);
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--md-elevation-4);
+    }
+    
+    .card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        z-index: 1;
+    }
+    
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .quick-action-btn {
+        transition: all 0.3s ease;
+        border-radius: var(--md-radius-lg);
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--md-elevation-2);
+    }
+    
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: var(--md-radius-md);
+        background: var(--md-gray-50);
+        transition: all 0.2s ease;
+    }
+    
+    .activity-item:hover {
+        background: var(--md-gray-100);
+        transform: translateX(5px);
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 1rem;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .notification-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--md-gray-200);
+    }
+    
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .dashboard-card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+    .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+    .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+    .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+</style>
 
 @code {
     private List<User>? users;

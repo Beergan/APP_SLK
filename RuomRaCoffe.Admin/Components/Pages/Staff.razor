@@ -8,85 +8,104 @@
 <PageTitle>Staff Management</PageTitle>
 
 <div class="md-container">
-    <!-- Header -->
+    <!-- Enhanced Header -->
     <div class="md-row md-mb-4">
         <div class="md-col-12">
-            <div class="md-d-flex md-justify-content-between md-align-items-center">
-                <h1 class="md-d-flex md-align-items-center">
-                    <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">people</span>
-                    Staff Management
-                </h1>
-                <div class="md-d-flex">
-                    <button class="md-btn md-btn-success md-mb-0" style="margin-right: 0.5rem;" @onclick='() => Navigation.NavigateTo("/staff/checkin")'>
-                        <span class="material-icons" style="margin-right: 0.25rem;">schedule</span>
-                        Check In/Out
-                    </button>
-                    <button class="md-btn md-btn-primary md-mb-0" @onclick="ShowCreateModal">
-                        <span class="material-icons" style="margin-right: 0.25rem;">add</span>
-                        Add New Staff
-                    </button>
+            <div class="md-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem;">
+                <div class="md-d-flex md-justify-content-between md-align-items-center">
+                    <div class="md-d-flex md-align-items-center">
+                        <div class="header-icon-circle">
+                            <span class="material-icons md-font-size-2xl">people</span>
+                        </div>
+                        <div style="margin-left: 1rem;">
+                            <h1 class="md-mb-0 md-font-size-3xl">Staff Management</h1>
+                            <p style="opacity: 0.9; margin: 0;">Manage your team efficiently</p>
+                        </div>
+                    </div>
+                    <div class="md-d-flex">
+                        <button class="md-btn md-btn-outlined" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white; margin-right: 0.5rem;" @onclick="() => Navigation.NavigateTo("/staff/checkin")">
+                            <span class="material-icons" style="margin-right: 0.25rem;">schedule</span>
+                            Check In/Out
+                        </button>
+                        <button class="md-btn md-btn-primary" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);" @onclick="ShowCreateModal">
+                            <span class="material-icons" style="margin-right: 0.25rem;">add</span>
+                            Add New Staff
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
+    <!-- Enhanced Statistics Cards -->
     <div class="md-row md-mb-4">
         <div class="md-col-3">
-            <div class="md-card" style="background: linear-gradient(135deg, var(--md-primary), var(--md-primary-dark)); color: white;">
-                <div class="md-card-body">
+            <div class="md-card stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="stat-card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
                     <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">Total Staff</h4>
-                            <h2 class="md-mb-0">@(staffList?.Count ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Total Staff</h4>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(staffList?.Count ?? 0)</h2>
                         </div>
                         <div class="md-align-self-center">
-                            <span class="material-icons md-font-size-4xl">people</span>
+                            <div class="stat-icon-circle">
+                                <span class="material-icons md-font-size-2xl">people</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="md-col-3">
-            <div class="md-card" style="background: linear-gradient(135deg, var(--md-success), var(--md-success-dark)); color: white;">
-                <div class="md-card-body">
+            <div class="md-card stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div class="stat-card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
                     <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">Currently Working</h4>
-                            <h2 class="md-mb-0">@(staffList?.Count(s => s.IsCurrentlyWorking) ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Currently Working</h4>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(staffList?.Count(s => s.IsCurrentlyWorking) ?? 0)</h2>
                         </div>
                         <div class="md-align-self-center">
-                            <span class="material-icons md-font-size-4xl">schedule</span>
+                            <div class="stat-icon-circle">
+                                <span class="material-icons md-font-size-2xl">schedule</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="md-col-3">
-            <div class="md-card" style="background: linear-gradient(135deg, var(--md-info), var(--md-info-dark)); color: white;">
-                <div class="md-card-body">
+            <div class="md-card stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <div class="stat-card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
                     <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">Active Staff</h4>
-                            <h2 class="md-mb-0">@(staffList?.Count(s => s.IsActive) ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Active Staff</h4>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(staffList?.Count(s => s.IsActive) ?? 0)</h2>
                         </div>
                         <div class="md-align-self-center">
-                            <span class="material-icons md-font-size-4xl">person</span>
+                            <div class="stat-icon-circle">
+                                <span class="material-icons md-font-size-2xl">person</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="md-col-3">
-            <div class="md-card" style="background: linear-gradient(135deg, var(--md-warning), var(--md-warning-dark)); color: white;">
-                <div class="md-card-body">
+            <div class="md-card stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                <div class="stat-card-overlay"></div>
+                <div class="md-card-body" style="position: relative; z-index: 2;">
                     <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">On Leave</h4>
-                            <h2 class="md-mb-0">@(staffList?.Count(s => !s.IsCurrentlyWorking && s.IsActive) ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">On Leave</h4>
+                            <h2 class="md-mb-0 md-font-size-3xl">@(staffList?.Count(s => !s.IsCurrentlyWorking && s.IsActive) ?? 0)</h2>
                         </div>
                         <div class="md-align-self-center">
-                            <span class="material-icons md-font-size-4xl">person_off</span>
+                            <div class="stat-icon-circle">
+                                <span class="material-icons md-font-size-2xl">person_off</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -94,38 +113,47 @@
         </div>
     </div>
 
-    <!-- Filters -->
+    <!-- Enhanced Filters -->
     <div class="md-row md-mb-3">
         <div class="md-col-12">
-            <div class="md-card">
+            <div class="md-card filter-card">
                 <div class="md-card-body">
                     <div class="md-row">
                         <div class="md-col-3">
-                            <div class="md-text-field">
+                            <div class="md-text-field enhanced-text-field">
                                 <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder=" " />
-                                <label>Search</label>
+                                <label>
+                                    <span class="material-icons md-font-size-sm" style="margin-right: 0.25rem;">search</span>
+                                    Search
+                                </label>
                             </div>
                         </div>
                         <div class="md-col-3">
-                            <div class="md-text-field">
+                            <div class="md-text-field enhanced-text-field">
                                 <select @bind="statusFilter">
                                     <option value="">All</option>
                                     <option value="working">Currently Working</option>
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
-                                <label>Status</label>
+                                <label>
+                                    <span class="material-icons md-font-size-sm" style="margin-right: 0.25rem;">filter_list</span>
+                                    Status
+                                </label>
                             </div>
                         </div>
                         <div class="md-col-3">
-                            <div class="md-text-field">
+                            <div class="md-text-field enhanced-text-field">
                                 <select @bind="roleFilter">
                                     <option value="">All Roles</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Manager">Manager</option>
                                     <option value="Staff">Staff</option>
                                 </select>
-                                <label>Role</label>
+                                <label>
+                                    <span class="material-icons md-font-size-sm" style="margin-right: 0.25rem;">work</span>
+                                    Role
+                                </label>
                             </div>
                         </div>
                         <div class="md-col-3 md-d-flex md-align-items-end">
@@ -144,7 +172,7 @@
         </div>
     </div>
 
-    <!-- Staff Table -->
+    <!-- Enhanced Staff Table -->
     @if (isLoading)
     {
         <div class="md-loading">
@@ -155,10 +183,10 @@
     {
         <div class="md-row">
             <div class="md-col-12">
-                <div class="md-card">
+                <div class="md-card table-card">
                     <div class="md-card-body">
                         <div style="overflow-x: auto;">
-                            <table class="md-table">
+                            <table class="md-table enhanced-table">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -176,10 +204,10 @@
                                     {
                                         @foreach (var staff in filteredStaff)
                                         {
-                                            <tr>
+                                            <tr class="staff-row">
                                                 <td>
                                                     <div class="md-d-flex md-align-items-center">
-                                                        <div class="md-avatar md-mb-0" style="margin-right: 0.5rem;">
+                                                        <div class="md-avatar md-mb-0 staff-avatar">
                                                             @staff.Name.Substring(0, 1).ToUpper()
                                                         </div>
                                                         <div>
@@ -191,20 +219,29 @@
                                                 <td>@staff.Email</td>
                                                 <td>@staff.Phone</td>
                                                 <td>
-                                                    <span class="md-chip md-chip-primary">@staff.Role</span>
+                                                    <span class="md-chip md-chip-primary role-chip">@staff.Role</span>
                                                 </td>
                                                 <td>
                                                     @if (staff.IsCurrentlyWorking)
                                                     {
-                                                        <span class="md-badge md-badge-success">Working</span>
+                                                        <span class="md-badge md-badge-success status-badge">
+                                                            <span class="material-icons md-font-size-xs" style="margin-right: 0.25rem;">schedule</span>
+                                                            Working
+                                                        </span>
                                                     }
                                                     else if (staff.IsActive)
                                                     {
-                                                        <span class="md-badge md-badge-warning">Available</span>
+                                                        <span class="md-badge md-badge-warning status-badge">
+                                                            <span class="material-icons md-font-size-xs" style="margin-right: 0.25rem;">person</span>
+                                                            Available
+                                                        </span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="md-badge md-badge-error">Inactive</span>
+                                                        <span class="md-badge md-badge-error status-badge">
+                                                            <span class="material-icons md-font-size-xs" style="margin-right: 0.25rem;">person_off</span>
+                                                            Inactive
+                                                        </span>
                                                     }
                                                 </td>
                                                 <td>
@@ -228,17 +265,17 @@
                                                     }
                                                 </td>
                                                 <td>
-                                                    <div class="md-d-flex">
-                                                        <button class="md-btn md-btn-text" @onclick="() => ViewStaff(staff.Id)" title="View">
+                                                    <div class="md-d-flex action-buttons">
+                                                        <button class="md-btn md-btn-text action-btn" @onclick="() => ViewStaff(staff.Id)" title="View">
                                                             <span class="material-icons">visibility</span>
                                                         </button>
-                                                        <button class="md-btn md-btn-text" @onclick="() => EditStaff(staff.Id)" title="Edit">
+                                                        <button class="md-btn md-btn-text action-btn" @onclick="() => EditStaff(staff.Id)" title="Edit">
                                                             <span class="material-icons">edit</span>
                                                         </button>
-                                                        <button class="md-btn md-btn-text" @onclick="() => ViewShiftHistory(staff.Id)" title="Shift History">
+                                                        <button class="md-btn md-btn-text action-btn" @onclick="() => ViewShiftHistory(staff.Id)" title="Shift History">
                                                             <span class="material-icons">history</span>
                                                         </button>
-                                                        <button class="md-btn md-btn-text" style="color: var(--md-error);" @onclick="() => DeleteStaff(staff.Id)" title="Delete">
+                                                        <button class="md-btn md-btn-text action-btn delete-btn" @onclick="() => DeleteStaff(staff.Id)" title="Delete">
                                                             <span class="material-icons">delete</span>
                                                         </button>
                                                     </div>
@@ -255,6 +292,157 @@
         </div>
     }
 </div>
+
+<style>
+    .header-icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .stat-card {
+        transition: all 0.3s ease;
+        transform: translateY(0);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--md-elevation-4);
+    }
+    
+    .stat-card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        z-index: 1;
+    }
+    
+    .stat-icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .filter-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: none;
+    }
+    
+    .enhanced-text-field {
+        position: relative;
+    }
+    
+    .enhanced-text-field label {
+        display: flex;
+        align-items: center;
+    }
+    
+    .table-card {
+        border-radius: var(--md-radius-lg);
+        overflow: hidden;
+    }
+    
+    .enhanced-table {
+        border-radius: var(--md-radius-lg);
+    }
+    
+    .staff-row {
+        transition: all 0.2s ease;
+    }
+    
+    .staff-row:hover {
+        background: linear-gradient(135deg, var(--md-gray-50) 0%, var(--md-gray-100) 100%);
+        transform: scale(1.01);
+    }
+    
+    .staff-avatar {
+        background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-dark) 100%);
+        box-shadow: var(--md-elevation-1);
+    }
+    
+    .role-chip {
+        background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-dark) 100%);
+        color: white;
+        font-weight: 500;
+    }
+    
+    .status-badge {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: var(--md-font-size-xs);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .action-buttons {
+        gap: 0.25rem;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    
+    .action-btn:hover {
+        background: var(--md-gray-100);
+        transform: scale(1.1);
+    }
+    
+    .delete-btn:hover {
+        background: rgba(244, 67, 54, 0.1);
+        color: var(--md-error);
+    }
+    
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .stat-card {
+        animation: slideInUp 0.6s ease-out;
+    }
+    
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    
+    .staff-row {
+        animation: slideInUp 0.4s ease-out;
+    }
+    
+    .staff-row:nth-child(1) { animation-delay: 0.1s; }
+    .staff-row:nth-child(2) { animation-delay: 0.2s; }
+    .staff-row:nth-child(3) { animation-delay: 0.3s; }
+    .staff-row:nth-child(4) { animation-delay: 0.4s; }
+    .staff-row:nth-child(5) { animation-delay: 0.5s; }
+</style>
 
 @code {
     private List<StaffDto>? staffList;
@@ -321,29 +509,29 @@
     {
         if (staffList == null) return;
 
-        filteredStaff = staffList.ToList();
+        filteredStaff = staffList.AsEnumerable();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             filteredStaff = filteredStaff.Where(s => 
                 s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
         if (!string.IsNullOrEmpty(statusFilter))
         {
             filteredStaff = statusFilter switch
             {
-                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking).ToList(),
-                "active" => filteredStaff.Where(s => s.IsActive).ToList(),
-                "inactive" => filteredStaff.Where(s => !s.IsActive).ToList(),
+                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking),
+                "active" => filteredStaff.Where(s => s.IsActive),
+                "inactive" => filteredStaff.Where(s => !s.IsActive),
                 _ => filteredStaff
             };
         }
 
         if (!string.IsNullOrEmpty(roleFilter))
         {
-            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter).ToList();
+            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter);
         }
 
         filteredStaff = filteredStaff.ToList();
