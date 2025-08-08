@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="md-d-flex">
-                        <button class="md-btn md-btn-outlined" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white; margin-right: 0.5rem;" @onclick="() => Navigation.NavigateTo("/staff/checkin")">
+                        <button class="md-btn md-btn-outlined" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white; margin-right: 0.5rem;" @onclick='() => Navigation.NavigateTo("/staff/checkin")'>
                             <span class="material-icons" style="margin-right: 0.25rem;">schedule</span>
                             Check In/Out
                         </button>
@@ -413,7 +413,7 @@
         color: var(--md-error);
     }
     
-    @keyframes slideInUp {
+    @@keyframes slideInUp {
         from {
             opacity: 0;
             transform: translateY(30px);
@@ -509,29 +509,29 @@
     {
         if (staffList == null) return;
 
-        filteredStaff = staffList.AsEnumerable();
+        filteredStaff = staffList.AsEnumerable().ToList();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             filteredStaff = filteredStaff.Where(s => 
                 s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         if (!string.IsNullOrEmpty(statusFilter))
         {
             filteredStaff = statusFilter switch
             {
-                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking),
-                "active" => filteredStaff.Where(s => s.IsActive),
-                "inactive" => filteredStaff.Where(s => !s.IsActive),
+                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking).ToList(),
+                "active" => filteredStaff.Where(s => s.IsActive).ToList(),
+                "inactive" => filteredStaff.Where(s => !s.IsActive).ToList(),
                 _ => filteredStaff
             };
         }
 
         if (!string.IsNullOrEmpty(roleFilter))
         {
-            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter);
+            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter).ToList();
         }
 
         filteredStaff = filteredStaff.ToList();
