@@ -1,52 +1,36 @@
-﻿<div class="md-nav">
-    <div class="md-container">
-        <a class="md-nav-brand" href="">Admin Dashboard</a>
-    </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="" Match="NavLinkMatch.All">
-                <span class="material-icons">home</span> Dashboard
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="staff">
-                <span class="material-icons">people</span> Staff Management
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="staff/checkin">
-                <span class="material-icons">schedule</span> Check In/Out
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="users">
-                <span class="material-icons">person</span> Users
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="products">
-                <span class="material-icons">inventory</span> Products
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="orders">
-                <span class="material-icons">shopping_cart</span> Orders
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="md-nav-link" href="reports">
-                <span class="material-icons">analytics</span> Reports
-            </NavLink>
-        </div>
-    </nav>
-</div>
+﻿<MudNavMenu>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">
+        Dashboard
+    </MudNavLink>
+    
+    <MudNavGroup Title="Staff Management" Icon="@Icons.Material.Filled.People" Expanded="true">
+        <MudNavLink Href="staff" Icon="@Icons.Material.Filled.People">
+            Staff List
+        </MudNavLink>
+        <MudNavLink Href="staff/checkin" Icon="@Icons.Material.Filled.Schedule">
+            Check In/Out
+        </MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavGroup Title="User Management" Icon="@Icons.Material.Filled.Person" Expanded="true">
+        <MudNavLink Href="users" Icon="@Icons.Material.Filled.Person">
+            Users
+        </MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavGroup Title="System" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+        <MudNavLink Href="counter" Icon="@Icons.Material.Filled.Add">
+            Counter
+        </MudNavLink>
+        <MudNavLink Href="weather" Icon="@Icons.Material.Filled.WbSunny">
+            Weather
+        </MudNavLink>
+    </MudNavGroup>
+    
+    <MudDivider Class="my-4" />
+    
+    <MudNavLink Href="logout" Icon="@Icons.Material.Filled.Logout" Color="Color.Error">
+        Logout
+    </MudNavLink>
+</MudNavMenu>
 

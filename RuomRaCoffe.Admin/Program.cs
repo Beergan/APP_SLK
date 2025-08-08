@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using RuomRaCoffe.Admin.API;
 using RuomRaCoffe.Admin.Services;
 using RuomRaCoffe.API.Data.Entities;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +50,9 @@ builder.Services.AddScoped<StaffService>();
 // Add services to the container
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+// MudBlazor
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
