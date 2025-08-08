@@ -7,18 +7,23 @@
 
 <PageTitle>Staff Detail</PageTitle>
 
-<div class="container-fluid">
+<div class="md-container">
     <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1><i class="bi bi-person-fill me-2"></i>Staff Detail</h1>
-                <div>
-                    <button class="btn btn-outline-secondary me-2" @onclick='() => Navigation.NavigateTo("/staff")'>
-                        <i class="bi bi-arrow-left"></i> Back to Staff
+    <div class="md-row md-mb-4">
+        <div class="md-col-12">
+            <div class="md-d-flex md-justify-content-between md-align-items-center">
+                <h1 class="md-d-flex md-align-items-center">
+                    <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">person</span>
+                    Staff Detail
+                </h1>
+                <div class="md-d-flex">
+                    <button class="md-btn md-btn-outlined md-mb-0" style="margin-right: 0.5rem;" @onclick="() => Navigation.NavigateTo("/staff")">
+                        <span class="material-icons" style="margin-right: 0.25rem;">arrow_back</span>
+                        Back to Staff
                     </button>
-                    <button class="btn btn-primary" @onclick="EditStaff">
-                        <i class="bi bi-pencil"></i> Edit Staff
+                    <button class="md-btn md-btn-primary md-mb-0" @onclick="EditStaff">
+                        <span class="material-icons" style="margin-right: 0.25rem;">edit</span>
+                        Edit Staff
                     </button>
                 </div>
             </div>
@@ -27,65 +32,61 @@
 
     @if (isLoading)
     {
-        <div class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+        <div class="md-loading">
+            <div class="md-spinner"></div>
         </div>
     }
     else if (staff != null)
     {
-        <div class="row">
+        <div class="md-row">
             <!-- Staff Information -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="avatar-lg mx-auto mb-3">
-                            <div class="avatar-title bg-primary rounded-circle fs-1">
-                                @staff.Name.Substring(0, 1).ToUpper()
-                            </div>
+            <div class="md-col-4">
+                <div class="md-card">
+                    <div class="md-card-body md-text-center">
+                        <div class="md-avatar md-avatar-lg md-mb-0" style="margin: 0 auto 1rem auto; display: block;">
+                            @staff.Name.Substring(0, 1).ToUpper()
                         </div>
                         <h4>@staff.Name</h4>
-                        <p class="text-muted">@staff.Role</p>
-                        <div class="mb-3">
+                        <p style="color: var(--md-gray-600);">@staff.Role</p>
+                        <div class="md-mb-3">
                             @if (staff.IsCurrentlyWorking)
                             {
-                                <span class="badge bg-success">Currently Working</span>
+                                <span class="md-badge md-badge-success">Currently Working</span>
                             }
                             else if (staff.IsActive)
                             {
-                                <span class="badge bg-warning">Available</span>
+                                <span class="md-badge md-badge-warning">Available</span>
                             }
                             else
                             {
-                                <span class="badge bg-danger">Inactive</span>
+                                <span class="md-badge md-badge-error">Inactive</span>
                             }
                         </div>
-                        <hr />
-                        <div class="text-start">
-                            <div class="mb-2">
-                                <small class="text-muted">Email</small>
+                        <div class="md-divider"></div>
+                        <div class="md-text-left">
+                            <div class="md-mb-2">
+                                <small style="color: var(--md-gray-600);">Email</small>
                                 <div>@staff.Email</div>
                             </div>
-                            <div class="mb-2">
-                                <small class="text-muted">Phone</small>
+                            <div class="md-mb-2">
+                                <small style="color: var(--md-gray-600);">Phone</small>
                                 <div>@staff.Phone</div>
                             </div>
-                            <div class="mb-2">
-                                <small class="text-muted">Member Since</small>
+                            <div class="md-mb-2">
+                                <small style="color: var(--md-gray-600);">Member Since</small>
                                 <div>@staff.CreatedAt.ToString("MMM dd, yyyy")</div>
                             </div>
                             @if (staff.LastCheckIn.HasValue)
                             {
-                                <div class="mb-2">
-                                    <small class="text-muted">Last Check In</small>
+                                <div class="md-mb-2">
+                                    <small style="color: var(--md-gray-600);">Last Check In</small>
                                     <div>@staff.LastCheckIn.Value.ToString("MMM dd, yyyy HH:mm")</div>
                                 </div>
                             }
                             @if (staff.LastCheckOut.HasValue)
                             {
-                                <div class="mb-2">
-                                    <small class="text-muted">Last Check Out</small>
+                                <div class="md-mb-2">
+                                    <small style="color: var(--md-gray-600);">Last Check Out</small>
                                     <div>@staff.LastCheckOut.Value.ToString("MMM dd, yyyy HH:mm")</div>
                                 </div>
                             }
@@ -95,16 +96,19 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Shift History</h5>
+            <div class="md-col-8">
+                <div class="md-card">
+                    <div class="md-card-header">
+                        <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                            <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">history</span>
+                            Recent Shift History
+                        </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="md-card-body">
                         @if (shiftHistory != null && shiftHistory.Any())
                         {
-                            <div class="table-responsive">
-                                <table class="table table-striped">
+                            <div style="overflow-x: auto;">
+                                <table class="md-table">
                                     <thead>
                                         <tr>
                                             <th>Date</th>
@@ -127,7 +131,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <span class="text-muted">-</span>
+                                                        <span style="color: var(--md-gray-500);">-</span>
                                                     }
                                                 </td>
                                                 <td>
@@ -137,7 +141,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <span class="text-muted">-</span>
+                                                        <span style="color: var(--md-gray-500);">-</span>
                                                     }
                                                 </td>
                                                 <td>
@@ -147,7 +151,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <small class="text-muted">No note</small>
+                                                        <small style="color: var(--md-gray-500);">No note</small>
                                                     }
                                                 </td>
                                             </tr>
@@ -158,9 +162,9 @@
                         }
                         else
                         {
-                            <div class="text-center py-4">
-                                <i class="bi bi-clock fs-1 text-muted"></i>
-                                <p class="text-muted mt-2">No shift history available</p>
+                            <div class="md-text-center" style="padding: 2rem;">
+                                <span class="material-icons md-font-size-4xl" style="color: var(--md-gray-400);">schedule</span>
+                                <p style="color: var(--md-gray-600); margin-top: 1rem;">No shift history available</p>
                             </div>
                         }
                     </div>
@@ -169,62 +173,62 @@
         </div>
 
         <!-- Statistics -->
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
+        <div class="md-row md-mt-4">
+            <div class="md-col-3">
+                <div class="md-card" style="background: linear-gradient(135deg, var(--md-primary), var(--md-primary-dark)); color: white;">
+                    <div class="md-card-body">
+                        <div class="md-d-flex md-justify-content-between md-align-items-center">
                             <div>
-                                <h6 class="card-title">Total Shifts</h6>
-                                <h3>@(shiftHistory?.Count ?? 0)</h3>
+                                <h6 class="md-mb-0">Total Shifts</h6>
+                                <h3 class="md-mb-0">@(shiftHistory?.Count ?? 0)</h3>
                             </div>
-                            <div class="align-self-center">
-                                <i class="bi bi-calendar-check fs-1"></i>
+                            <div class="md-align-self-center">
+                                <span class="material-icons md-font-size-3xl">calendar_today</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
+            <div class="md-col-3">
+                <div class="md-card" style="background: linear-gradient(135deg, var(--md-success), var(--md-success-dark)); color: white;">
+                    <div class="md-card-body">
+                        <div class="md-d-flex md-justify-content-between md-align-items-center">
                             <div>
-                                <h6 class="card-title">Total Hours</h6>
-                                <h3>@totalHours.ToString("F1")</h3>
+                                <h6 class="md-mb-0">Total Hours</h6>
+                                <h3 class="md-mb-0">@totalHours.ToString("F1")</h3>
                             </div>
-                            <div class="align-self-center">
-                                <i class="bi bi-clock-history fs-1"></i>
+                            <div class="md-align-self-center">
+                                <span class="material-icons md-font-size-3xl">schedule</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
+            <div class="md-col-3">
+                <div class="md-card" style="background: linear-gradient(135deg, var(--md-info), var(--md-info-dark)); color: white;">
+                    <div class="md-card-body">
+                        <div class="md-d-flex md-justify-content-between md-align-items-center">
                             <div>
-                                <h6 class="card-title">Avg. Shift</h6>
-                                <h3>@averageShiftHours.ToString("F1")h</h3>
+                                <h6 class="md-mb-0">Avg. Shift</h6>
+                                <h3 class="md-mb-0">@averageShiftHours.ToString("F1")h</h3>
                             </div>
-                            <div class="align-self-center">
-                                <i class="bi bi-graph-up fs-1"></i>
+                            <div class="md-align-self-center">
+                                <span class="material-icons md-font-size-3xl">trending_up</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
+            <div class="md-col-3">
+                <div class="md-card" style="background: linear-gradient(135deg, var(--md-warning), var(--md-warning-dark)); color: white;">
+                    <div class="md-card-body">
+                        <div class="md-d-flex md-justify-content-between md-align-items-center">
                             <div>
-                                <h6 class="card-title">This Month</h6>
-                                <h3>@thisMonthShifts</h3>
+                                <h6 class="md-mb-0">This Month</h6>
+                                <h3 class="md-mb-0">@thisMonthShifts</h3>
                             </div>
-                            <div class="align-self-center">
-                                <i class="bi bi-calendar-month fs-1"></i>
+                            <div class="md-align-self-center">
+                                <span class="material-icons md-font-size-3xl">calendar_month</span>
                             </div>
                         </div>
                     </div>
@@ -234,11 +238,11 @@
     }
     else
     {
-        <div class="text-center py-5">
-            <i class="bi bi-person-x fs-1 text-muted"></i>
-            <h3 class="mt-3">Staff Not Found</h3>
-            <p class="text-muted">The staff member you're looking for doesn't exist.</p>
-            <button class="btn btn-primary" @onclick='() => Navigation.NavigateTo("/staff")'>
+        <div class="md-text-center" style="padding: 3rem;">
+            <span class="material-icons md-font-size-4xl" style="color: var(--md-gray-400);">person_off</span>
+            <h3 class="md-mt-3">Staff Not Found</h3>
+            <p style="color: var(--md-gray-600);">The staff member you're looking for doesn't exist.</p>
+            <button class="md-btn md-btn-primary" @onclick="() => Navigation.NavigateTo("/staff")">
                 Back to Staff List
             </button>
         </div>

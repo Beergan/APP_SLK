@@ -7,18 +7,23 @@
 
 <PageTitle>Staff Management</PageTitle>
 
-<div class="container-fluid">
+<div class="md-container">
     <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1><i class="bi bi-people-fill me-2"></i>Staff Management</h1>
-                <div>
-                    <button class="btn btn-success me-2" @onclick='() => Navigation.NavigateTo("/staff/checkin")'>
-                        <i class="bi bi-clock-in"></i> Check In/Out
+    <div class="md-row md-mb-4">
+        <div class="md-col-12">
+            <div class="md-d-flex md-justify-content-between md-align-items-center">
+                <h1 class="md-d-flex md-align-items-center">
+                    <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">people</span>
+                    Staff Management
+                </h1>
+                <div class="md-d-flex">
+                    <button class="md-btn md-btn-success md-mb-0" style="margin-right: 0.5rem;" @onclick="() => Navigation.NavigateTo("/staff/checkin")">
+                        <span class="material-icons" style="margin-right: 0.25rem;">schedule</span>
+                        Check In/Out
                     </button>
-                    <button class="btn btn-primary" @onclick="ShowCreateModal">
-                        <i class="bi bi-plus"></i> Add New Staff
+                    <button class="md-btn md-btn-primary md-mb-0" @onclick="ShowCreateModal">
+                        <span class="material-icons" style="margin-right: 0.25rem;">add</span>
+                        Add New Staff
                     </button>
                 </div>
             </div>
@@ -26,62 +31,62 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+    <div class="md-row md-mb-4">
+        <div class="md-col-3">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-primary), var(--md-primary-dark)); color: white;">
+                <div class="md-card-body">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="card-title">Total Staff</h4>
-                            <h2>@(staffList?.Count ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">Total Staff</h4>
+                            <h2 class="md-mb-0">@(staffList?.Count ?? 0)</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-people-fill fs-1"></i>
+                        <div class="md-align-self-center">
+                            <span class="material-icons md-font-size-4xl">people</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        <div class="md-col-3">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-success), var(--md-success-dark)); color: white;">
+                <div class="md-card-body">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="card-title">Currently Working</h4>
-                            <h2>@(staffList?.Count(s => s.IsCurrentlyWorking) ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">Currently Working</h4>
+                            <h2 class="md-mb-0">@(staffList?.Count(s => s.IsCurrentlyWorking) ?? 0)</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-clock-fill fs-1"></i>
+                        <div class="md-align-self-center">
+                            <span class="material-icons md-font-size-4xl">schedule</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        <div class="md-col-3">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-info), var(--md-info-dark)); color: white;">
+                <div class="md-card-body">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="card-title">Active Staff</h4>
-                            <h2>@(staffList?.Count(s => s.IsActive) ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">Active Staff</h4>
+                            <h2 class="md-mb-0">@(staffList?.Count(s => s.IsActive) ?? 0)</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-person-check-fill fs-1"></i>
+                        <div class="md-align-self-center">
+                            <span class="material-icons md-font-size-4xl">person</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
+        <div class="md-col-3">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-warning), var(--md-warning-dark)); color: white;">
+                <div class="md-card-body">
+                    <div class="md-d-flex md-justify-content-between md-align-items-center">
                         <div>
-                            <h4 class="card-title">On Leave</h4>
-                            <h2>@(staffList?.Count(s => !s.IsCurrentlyWorking && s.IsActive) ?? 0)</h2>
+                            <h4 class="md-mb-0" style="font-size: var(--md-font-size-sm); opacity: 0.9;">On Leave</h4>
+                            <h2 class="md-mb-0">@(staffList?.Count(s => !s.IsCurrentlyWorking && s.IsActive) ?? 0)</h2>
                         </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-person-x-fill fs-1"></i>
+                        <div class="md-align-self-center">
+                            <span class="material-icons md-font-size-4xl">person_off</span>
                         </div>
                     </div>
                 </div>
@@ -90,39 +95,47 @@
     </div>
 
     <!-- Filters -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label class="form-label">Search</label>
-                            <input type="text" class="form-control" @bind="searchTerm" @bind:event="oninput" placeholder="Search by name or email..." />
+    <div class="md-row md-mb-3">
+        <div class="md-col-12">
+            <div class="md-card">
+                <div class="md-card-body">
+                    <div class="md-row">
+                        <div class="md-col-3">
+                            <div class="md-text-field">
+                                <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder=" " />
+                                <label>Search</label>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" @bind="statusFilter">
-                                <option value="">All</option>
-                                <option value="working">Currently Working</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
+                        <div class="md-col-3">
+                            <div class="md-text-field">
+                                <select @bind="statusFilter">
+                                    <option value="">All</option>
+                                    <option value="working">Currently Working</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                                <label>Status</label>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Role</label>
-                            <select class="form-select" @bind="roleFilter">
-                                <option value="">All Roles</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Staff">Staff</option>
-                            </select>
+                        <div class="md-col-3">
+                            <div class="md-text-field">
+                                <select @bind="roleFilter">
+                                    <option value="">All Roles</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Staff">Staff</option>
+                                </select>
+                                <label>Role</label>
+                            </div>
                         </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <button class="btn btn-outline-secondary me-2" @onclick="ClearFilters">
-                                <i class="bi bi-arrow-clockwise"></i> Clear
+                        <div class="md-col-3 md-d-flex md-align-items-end">
+                            <button class="md-btn md-btn-outlined md-mb-0" style="margin-right: 0.5rem;" @onclick="ClearFilters">
+                                <span class="material-icons" style="margin-right: 0.25rem;">refresh</span>
+                                Clear
                             </button>
-                            <button class="btn btn-primary" @onclick="LoadStaff">
-                                <i class="bi bi-search"></i> Filter
+                            <button class="md-btn md-btn-primary md-mb-0" @onclick="LoadStaff">
+                                <span class="material-icons" style="margin-right: 0.25rem;">search</span>
+                                Filter
                             </button>
                         </div>
                     </div>
@@ -134,20 +147,18 @@
     <!-- Staff Table -->
     @if (isLoading)
     {
-        <div class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+        <div class="md-loading">
+            <div class="md-spinner"></div>
         </div>
     }
     else
     {
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+        <div class="md-row">
+            <div class="md-col-12">
+                <div class="md-card">
+                    <div class="md-card-body">
+                        <div style="overflow-x: auto;">
+                            <table class="md-table">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -167,35 +178,33 @@
                                         {
                                             <tr>
                                                 <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar-sm me-2">
-                                                            <div class="avatar-title bg-primary rounded-circle">
-                                                                @staff.Name.Substring(0, 1).ToUpper()
-                                                            </div>
+                                                    <div class="md-d-flex md-align-items-center">
+                                                        <div class="md-avatar md-mb-0" style="margin-right: 0.5rem;">
+                                                            @staff.Name.Substring(0, 1).ToUpper()
                                                         </div>
                                                         <div>
-                                                            <h6 class="mb-0">@staff.Name</h6>
-                                                            <small class="text-muted">ID: @staff.Id.ToString().Substring(0, 8)...</small>
+                                                            <h6 class="md-mb-0">@staff.Name</h6>
+                                                            <small style="color: var(--md-gray-600);">ID: @staff.Id.ToString().Substring(0, 8)...</small>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>@staff.Email</td>
                                                 <td>@staff.Phone</td>
                                                 <td>
-                                                    <span class="badge bg-secondary">@staff.Role</span>
+                                                    <span class="md-chip md-chip-primary">@staff.Role</span>
                                                 </td>
                                                 <td>
                                                     @if (staff.IsCurrentlyWorking)
                                                     {
-                                                        <span class="badge bg-success">Working</span>
+                                                        <span class="md-badge md-badge-success">Working</span>
                                                     }
                                                     else if (staff.IsActive)
                                                     {
-                                                        <span class="badge bg-warning">Available</span>
+                                                        <span class="md-badge md-badge-warning">Available</span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="badge bg-danger">Inactive</span>
+                                                        <span class="md-badge md-badge-error">Inactive</span>
                                                     }
                                                 </td>
                                                 <td>
@@ -205,7 +214,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <small class="text-muted">Never</small>
+                                                        <small style="color: var(--md-gray-500);">Never</small>
                                                     }
                                                 </td>
                                                 <td>
@@ -215,22 +224,22 @@
                                                     }
                                                     else
                                                     {
-                                                        <small class="text-muted">Never</small>
+                                                        <small style="color: var(--md-gray-500);">Never</small>
                                                     }
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewStaff(staff.Id)" title="View">
-                                                            <i class="bi bi-eye"></i>
+                                                    <div class="md-d-flex">
+                                                        <button class="md-btn md-btn-text" @onclick="() => ViewStaff(staff.Id)" title="View">
+                                                            <span class="material-icons">visibility</span>
                                                         </button>
-                                                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditStaff(staff.Id)" title="Edit">
-                                                            <i class="bi bi-pencil"></i>
+                                                        <button class="md-btn md-btn-text" @onclick="() => EditStaff(staff.Id)" title="Edit">
+                                                            <span class="material-icons">edit</span>
                                                         </button>
-                                                        <button class="btn btn-sm btn-outline-info" @onclick="() => ViewShiftHistory(staff.Id)" title="Shift History">
-                                                            <i class="bi bi-clock-history"></i>
+                                                        <button class="md-btn md-btn-text" @onclick="() => ViewShiftHistory(staff.Id)" title="Shift History">
+                                                            <span class="material-icons">history</span>
                                                         </button>
-                                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteStaff(staff.Id)" title="Delete">
-                                                            <i class="bi bi-trash"></i>
+                                                        <button class="md-btn md-btn-text" style="color: var(--md-error);" @onclick="() => DeleteStaff(staff.Id)" title="Delete">
+                                                            <span class="material-icons">delete</span>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -312,29 +321,29 @@
     {
         if (staffList == null) return;
 
-        filteredStaff = staffList.ToList();
+        filteredStaff = staffList.AsEnumerable();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             filteredStaff = filteredStaff.Where(s => 
                 s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
         if (!string.IsNullOrEmpty(statusFilter))
         {
             filteredStaff = statusFilter switch
             {
-                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking).ToList(),
-                "active" => filteredStaff.Where(s => s.IsActive).ToList(),
-                "inactive" => filteredStaff.Where(s => !s.IsActive).ToList(),
+                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking),
+                "active" => filteredStaff.Where(s => s.IsActive),
+                "inactive" => filteredStaff.Where(s => !s.IsActive),
                 _ => filteredStaff
             };
         }
 
         if (!string.IsNullOrEmpty(roleFilter))
         {
-            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter).ToList();
+            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter);
         }
 
         filteredStaff = filteredStaff.ToList();
@@ -370,6 +379,7 @@
 
     private async Task DeleteStaff(Guid id)
     {
+        // TODO: Implement delete confirmation and API call
         Console.WriteLine($"Delete staff with ID: {id}");
     }
 } 

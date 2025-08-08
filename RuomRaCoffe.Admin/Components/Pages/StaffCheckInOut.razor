@@ -7,26 +7,30 @@
 
 <PageTitle>Staff Check In/Out</PageTitle>
 
-<div class="container-fluid">
+<div class="md-container">
     <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1><i class="bi bi-clock-fill me-2"></i>Staff Check In/Out</h1>
-                <button class="btn btn-outline-secondary" @onclick='() => Navigation.NavigateTo("/staff")'>
-                    <i class="bi bi-arrow-left"></i> Back to Staff
+    <div class="md-row md-mb-4">
+        <div class="md-col-12">
+            <div class="md-d-flex md-justify-content-between md-align-items-center">
+                <h1 class="md-d-flex md-align-items-center">
+                    <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">schedule</span>
+                    Staff Check In/Out
+                </h1>
+                <button class="md-btn md-btn-outlined md-mb-0" @onclick="() => Navigation.NavigateTo("/staff")">
+                    <span class="material-icons" style="margin-right: 0.25rem;">arrow_back</span>
+                    Back to Staff
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Current Time Display -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-primary text-white">
-                <div class="card-body text-center">
-                    <h2 class="mb-0">@currentTime.ToString("dddd, MMMM dd, yyyy")</h2>
-                    <h1 class="display-4 mb-0">@currentTime.ToString("HH:mm:ss")</h1>
+    <div class="md-row md-mb-4">
+        <div class="md-col-12">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-primary), var(--md-primary-dark)); color: white;">
+                <div class="md-card-body md-text-center">
+                    <h2 class="md-mb-0">@currentTime.ToString("dddd, MMMM dd, yyyy")</h2>
+                    <h1 class="md-font-size-4xl md-mb-0">@currentTime.ToString("HH:mm:ss")</h1>
                     <small>@currentTime.ToString("tt")</small>
                 </div>
             </div>
@@ -34,21 +38,22 @@
     </div>
 
     <!-- Quick Check In/Out -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-search me-2"></i>Find Staff</h5>
+    <div class="md-row md-mb-4">
+        <div class="md-col-6">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">search</span>
+                        Find Staff
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Search Staff</label>
-                        <input type="text" class="form-control" @bind="searchTerm" @bind:event="oninput" 
-                               placeholder="Enter staff name, email, or ID..." />
+                <div class="md-card-body">
+                    <div class="md-text-field">
+                        <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder=" " />
+                        <label>Search Staff</label>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Or Select from List</label>
-                        <select class="form-select" @bind="selectedStaffId">
+                    <div class="md-text-field">
+                        <select @bind="selectedStaffId">
                             <option value="">Choose staff member...</option>
                             @if (staffList != null)
                             {
@@ -58,53 +63,56 @@
                                 }
                             }
                         </select>
+                        <label>Or Select from List</label>
                     </div>
-                    <button class="btn btn-primary w-100" @onclick="FindStaff">
-                        <i class="bi bi-search"></i> Find Staff
+                    <button class="md-btn md-btn-primary" style="width: 100%;" @onclick="FindStaff">
+                        <span class="material-icons" style="margin-right: 0.25rem;">search</span>
+                        Find Staff
                     </button>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="md-col-6">
             @if (selectedStaff != null)
             {
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-person-fill me-2"></i>Staff Information</h5>
+                <div class="md-card">
+                    <div class="md-card-header">
+                        <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                            <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">person</span>
+                            Staff Information
+                        </h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="avatar-lg mx-auto mb-3">
-                                    <div class="avatar-title bg-primary rounded-circle fs-1">
-                                        @selectedStaff.Name.Substring(0, 1).ToUpper()
-                                    </div>
+                    <div class="md-card-body">
+                        <div class="md-row">
+                            <div class="md-col-3">
+                                <div class="md-avatar md-avatar-lg md-mb-0" style="margin: 0 auto 1rem auto; display: block;">
+                                    @selectedStaff.Name.Substring(0, 1).ToUpper()
                                 </div>
                             </div>
-                            <div class="col-md-9">
+                            <div class="md-col-9">
                                 <h5>@selectedStaff.Name</h5>
-                                <p class="text-muted mb-1">@selectedStaff.Email</p>
-                                <p class="text-muted mb-2">@selectedStaff.Phone</p>
-                                <span class="badge bg-secondary">@selectedStaff.Role</span>
+                                <p style="color: var(--md-gray-600); margin-bottom: 0.25rem;">@selectedStaff.Email</p>
+                                <p style="color: var(--md-gray-600); margin-bottom: 0.5rem;">@selectedStaff.Phone</p>
+                                <span class="md-chip md-chip-primary">@selectedStaff.Role</span>
                             </div>
                         </div>
-                        <hr />
-                        <div class="row">
-                            <div class="col-6">
-                                <small class="text-muted">Status</small>
+                        <div class="md-divider"></div>
+                        <div class="md-row">
+                            <div class="md-col-6">
+                                <small style="color: var(--md-gray-600);">Status</small>
                                 <div>
                                     @if (selectedStaff.IsCurrentlyWorking)
                                     {
-                                        <span class="badge bg-success">Currently Working</span>
+                                        <span class="md-badge md-badge-success">Currently Working</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-warning">Available</span>
+                                        <span class="md-badge md-badge-warning">Available</span>
                                     }
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <small class="text-muted">Last Check In</small>
+                            <div class="md-col-6">
+                                <small style="color: var(--md-gray-600);">Last Check In</small>
                                 <div>
                                     @if (selectedStaff.LastCheckIn.HasValue)
                                     {
@@ -112,7 +120,7 @@
                                     }
                                     else
                                     {
-                                        <small class="text-muted">Never</small>
+                                        <small style="color: var(--md-gray-500);">Never</small>
                                     }
                                 </div>
                             </div>
@@ -126,38 +134,42 @@
     <!-- Check In/Out Actions -->
     @if (selectedStaff != null)
     {
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Check In/Out Actions</h5>
+        <div class="md-row md-mb-4">
+            <div class="md-col-12">
+                <div class="md-card">
+                    <div class="md-card-header">
+                        <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                            <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">history</span>
+                            Check In/Out Actions
+                        </h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Note (Optional)</label>
-                                    <textarea class="form-control" rows="3" @bind="note" 
-                                              placeholder="Add any notes about this check in/out..."></textarea>
+                    <div class="md-card-body">
+                        <div class="md-row">
+                            <div class="md-col-6">
+                                <div class="md-text-field">
+                                    <textarea @bind="note" rows="3" placeholder=" "></textarea>
+                                    <label>Note (Optional)</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="d-grid gap-2">
+                            <div class="md-col-6">
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                     @if (selectedStaff.IsCurrentlyWorking)
                                     {
-                                        <button class="btn btn-danger btn-lg" @onclick="CheckOut">
-                                            <i class="bi bi-clock-out"></i> Check Out
+                                        <button class="md-btn md-btn-error" style="height: 48px;" @onclick="CheckOut">
+                                            <span class="material-icons" style="margin-right: 0.25rem;">logout</span>
+                                            Check Out
                                         </button>
-                                        <small class="text-muted text-center">
+                                        <small style="color: var(--md-gray-600); text-align: center;">
                                             Staff is currently working. Click to check out.
                                         </small>
                                     }
                                     else
                                     {
-                                        <button class="btn btn-success btn-lg" @onclick="CheckIn">
-                                            <i class="bi bi-clock-in"></i> Check In
+                                        <button class="md-btn md-btn-success" style="height: 48px;" @onclick="CheckIn">
+                                            <span class="material-icons" style="margin-right: 0.25rem;">login</span>
+                                            Check In
                                         </button>
-                                        <small class="text-muted text-center">
+                                        <small style="color: var(--md-gray-600); text-align: center;">
                                             Staff is available. Click to check in.
                                         </small>
                                     }
@@ -171,25 +183,26 @@
     }
 
     <!-- Recent Activity -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-activity me-2"></i>Recent Check In/Out Activity</h5>
+    <div class="md-row">
+        <div class="md-col-12">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">activity</span>
+                        Recent Check In/Out Activity
+                    </h5>
                 </div>
-                <div class="card-body">
+                <div class="md-card-body">
                     @if (isLoadingRecent)
                     {
-                        <div class="text-center">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
+                        <div class="md-loading">
+                            <div class="md-spinner"></div>
                         </div>
                     }
                     else
                     {
-                        <div class="table-responsive">
-                            <table class="table table-striped">
+                        <div style="overflow-x: auto;">
+                            <table class="md-table">
                                 <thead>
                                     <tr>
                                         <th>Staff</th>
@@ -205,26 +218,24 @@
                                         {
                                             <tr>
                                                 <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar-sm me-2">
-                                                            <div class="avatar-title bg-primary rounded-circle">
-                                                                @activity.UserName.Substring(0, 1).ToUpper()
-                                                            </div>
+                                                    <div class="md-d-flex md-align-items-center">
+                                                        <div class="md-avatar md-mb-0" style="margin-right: 0.5rem;">
+                                                            @activity.UserName.Substring(0, 1).ToUpper()
                                                         </div>
                                                         <div>
-                                                            <h6 class="mb-0">@activity.UserName</h6>
-                                                            <small class="text-muted">@activity.UserId.ToString().Substring(0, 8)...</small>
+                                                            <h6 class="md-mb-0">@activity.UserName</h6>
+                                                            <small style="color: var(--md-gray-600);">@activity.UserId.ToString().Substring(0, 8)...</small>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     @if (activity.CheckOutTime.HasValue)
                                                     {
-                                                        <span class="badge bg-danger">Check Out</span>
+                                                        <span class="md-badge md-badge-error">Check Out</span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="badge bg-success">Check In</span>
+                                                        <span class="md-badge md-badge-success">Check In</span>
                                                     }
                                                 </td>
                                                 <td>
@@ -244,7 +255,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <small class="text-muted">No note</small>
+                                                        <small style="color: var(--md-gray-500);">No note</small>
                                                     }
                                                 </td>
                                             </tr>
@@ -333,13 +344,13 @@
     {
         if (staffList == null) return;
 
-        filteredStaff = staffList.ToList();
+        filteredStaff = staffList.AsEnumerable();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             filteredStaff = filteredStaff.Where(s => 
                 s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
         filteredStaff = filteredStaff.ToList();
