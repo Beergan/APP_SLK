@@ -10,3 +10,9 @@
 @using RuomRaCoffe.Admin
 @using RuomRaCoffe.Admin.Components
 @using RuomRaCoffe.Shared.Models
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using RuomRaCoffe.Admin.Services
+@inject UserService UserService
+@using RuomRaCoffe.API.Data.Entities;
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation

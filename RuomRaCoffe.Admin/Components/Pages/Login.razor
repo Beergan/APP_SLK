@@ -9,7 +9,7 @@
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
     <MudPaper Class="pa-6" Elevation="3">
-        <MudStack AlignItems="Center" Spacing="4">
+        <MudStack AlignItems="AlignItems.Center" Spacing="4">
             <MudAvatar Color="Color.Primary" Size="Size.Large">
                 <MudIcon Icon="@Icons.Material.Filled.Coffee" />
             </MudAvatar>
@@ -37,8 +37,8 @@
                              InputType="InputType.Password"
                              Class="mb-3" />
                 
-                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="Center" Class="mb-4">
-                    <MudCheckBox @bind-Checked="loginModel.RememberMe" Label="Remember me" />
+                <MudStack  Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
+                    <MudCheckBox T="string" @bind-Checked="loginModel.RememberMe" Label="Remember me" />
                     <MudLink Href="#" Color="Color.Primary">Forgot password?</MudLink>
                 </MudStack>
                 
@@ -73,7 +73,7 @@
             
             <MudButton Variant="Variant.Outlined" 
                        FullWidth="true"
-                       StartIcon="@Icons.Material.Filled.Google">
+                       StartIcon="@Icons.Material.Filled.Girl">
                 Continue with Google
             </MudButton>
             
