@@ -16,7 +16,7 @@
                     <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">schedule</span>
                     Staff Check In/Out
                 </h1>
-                <button class="md-btn md-btn-outlined md-mb-0" @onclick="() => Navigation.NavigateTo("/staff")">
+                <button class="md-btn md-btn-outlined md-mb-0" @onclick='() => Navigation.NavigateTo("/staff")'>
                     <span class="material-icons" style="margin-right: 0.25rem;">arrow_back</span>
                     Back to Staff
                 </button>
@@ -344,13 +344,13 @@
     {
         if (staffList == null) return;
 
-        filteredStaff = staffList.AsEnumerable();
+        filteredStaff = staffList.ToList();
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
             filteredStaff = filteredStaff.Where(s => 
                 s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         filteredStaff = filteredStaff.ToList();
