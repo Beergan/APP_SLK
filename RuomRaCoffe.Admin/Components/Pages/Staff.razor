@@ -4,6 +4,8 @@
 @using RuomRaCoffe.Shared.Dtos
 @inject StaffService StaffService
 @inject NavigationManager Navigation
+@using MudBlazor;
+@using System.Diagnostics.Metrics
 @inject ISnackbar Snackbar
 
 <PageTitle>Staff Management</PageTitle>
@@ -163,7 +165,7 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>
-                        <MudStack Row="true" AlignItems="Center">
+                        <MudStack Row="true" AlignItems="AlignItems.Center">
                             <MudAvatar Color="Color.Primary" Size="Size.Small">
                                 @context.Name.Substring(0, 1).ToUpper()
                             </MudAvatar>
@@ -178,28 +180,28 @@
                     <MudTd>@context.Email</MudTd>
                     <MudTd>@context.Phone</MudTd>
                     <MudTd>
-                        <MudChip Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small">
+                        <MudChip T="object" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small">
                             @context.Role
                         </MudChip>
                     </MudTd>
                     <MudTd>
                         @if (context.IsCurrentlyWorking)
                         {
-                            <MudChip Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">
+                            <MudChip T="object" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">
                                 <MudIcon Icon="@Icons.Material.Filled.Schedule" Size="Size.Small" Class="mr-1" />
                                 Working
                             </MudChip>
                         }
                         else if (context.IsActive)
                         {
-                            <MudChip Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">
+                            <MudChip T="object" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">
                                 <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1" />
                                 Available
                             </MudChip>
                         }
                         else
                         {
-                            <MudChip Color="Color.Error" Variant="Variant.Filled" Size="Size.Small">
+                            <MudChip T="object" Color="Color.Error" Variant="Variant.Filled" Size="Size.Small">
                                 <MudIcon Icon="@Icons.Material.Filled.PersonOff" Size="Size.Small" Class="mr-1" />
                                 Inactive
                             </MudChip>

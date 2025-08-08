@@ -1,9 +1,11 @@
 ﻿@page "/"
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using MudBlazor
 @using RuomRaCoffe.Admin.Services
 @inject UserService UserService
 @using RuomRaCoffe.API.Data.Entities;
 @inject ISnackbar Snackbar
-
+@inject NavigationManager Navigation
 <PageTitle>Dashboard</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
@@ -139,9 +141,9 @@
                     <MudIcon Icon="@Icons.Material.Filled.Timeline" Class="mr-2" />
                     Recent Activity
                 </MudText>
-                <MudList>
+                <MudList T="object">
                     <MudListItem>
-                        <MudAvatar Color="Color.Success" Class="mr-3">
+                        <MudAvatar  Color="Color.Success" Class="mr-3">
                             <MudIcon Icon="@Icons.Material.Filled.CheckCircle" />
                         </MudAvatar>
                         <MudText Typo="Typo.body1">New order received</MudText>
@@ -171,7 +173,7 @@
                     <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="mr-2" />
                     Notifications
                 </MudText>
-                <MudList>
+                <MudList T="object">
                     <MudListItem>
                         <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Success" Class="mr-2" />
                         <MudText>System running smoothly</MudText>
