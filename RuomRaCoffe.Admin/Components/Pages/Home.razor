@@ -1,0 +1,84 @@
+﻿@page "/"
+@using RuomRaCoffe.Admin.Services
+@inject UserService UserService
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Dashboard</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h2 class="card-text">@(users?.Count ?? 0)</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Products</h5>
+                    <h2 class="card-text">@(products?.Count ?? 0)</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <h2 class="card-text">@(orders?.Count ?? 0)</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Revenue</h5>
+                    <h2 class="card-text">$@(totalRevenue?.ToString("N0") ?? "0")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<User>? users;
+    private List<dynamic>? products;
+    private List<dynamic>? orders;
+    private decimal? totalRevenue;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            users = await UserService.GetUsersAsync();
+            // TODO: Add ProductService and OrderService calls
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            // TODO: Add proper error handling
+            isLoading = false;
+        }
+    }
+}

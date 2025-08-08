@@ -1,0 +1,112 @@
+﻿@page "/staff"
+@inject HttpClient Http
+@using Microsoft.JSInterop
+@using RuomRaCoffe.Shared.Models
+
+<h3>Quản lý nhân sự</h3>
+
+@if (users == null)
+{
+    <p>Đang tải...</p>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="ShowAddForm">+ Thêm nhân sự</button>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in users)
+            {
+                <tr>
+                    <td>@u.Name</td>
+                    <td>@u.Email</td>
+                    <td>@u.Role</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="@(() => EditUser(u))">Sửa</button>
+                        <button class="btn btn-sm btn-danger" @onclick="@(() => DeleteUser(u.Id))">Xóa</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (showForm)
+{
+    <div class="card mt-4 p-3">
+        <h5>@(editUser.Id == 0 ? "Thêm nhân sự" : "Cập nhật")</h5>
+        <input class="form-control mb-2" placeholder="Tên" @bind="editUser.Name" />
+        <input class="form-control mb-2" placeholder="Email" @bind="editUser.Email" />
+        <input class="form-control mb-2" placeholder="Role" @bind="editUser.Role" />
+
+        <button class="btn btn-success" @onclick="SaveUser">Lưu</button>
+        <button class="btn btn-secondary" @onclick="() => showForm = false">Hủy</button>
+    </div>
+}
+
+@code {
+    List<UserModel> users;
+    UserModel editUser = new();
+    bool showForm = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await Http.GetFromJsonAsync<List<UserModel>>("api/user");
+    }
+
+    void ShowAddForm()
+    {
+        editUser = new UserModel();
+        showForm = true;
+    }
+
+    void EditUser(UserModel user)
+    {
+        editUser = new UserModel
+        {
+            Name = user.Name,
+            Email = user.Email,
+            Role = user.Role
+        };
+        showForm = true;
+    }
+
+    async Task SaveUser()
+    {
+        if (editUser.Id == 0)
+        {
+            await Http.PostAsJsonAsync("api/user", editUser);
+        }
+        else
+        {
+            await Http.PutAsJsonAsync($"api/user/{editUser.Id}", editUser);
+        }
+
+        users = await Http.GetFromJsonAsync<List<UserModel>>("api/user");
+        showForm = false;
+    }
+
+    async Task DeleteUser(int id)
+    {
+        if (await JsConfirm($"Xác nhận xóa nhân sự {id}?"))
+        {
+            await Http.DeleteAsync($"api/user/{id}");
+            users = await Http.GetFromJsonAsync<List<UserModel>>("api/user");
+        }
+    }
+
+    async Task<bool> JsConfirm(string message)
+    {
+        return await JS.InvokeAsync<bool>("confirm", message);
+    }
+
+    [Inject] IJSRuntime JS { get; set; }
+}
