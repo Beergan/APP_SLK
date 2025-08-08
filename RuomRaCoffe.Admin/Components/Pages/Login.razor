@@ -3,416 +3,86 @@
 @using Microsoft.AspNetCore.Authentication.Cookies
 @inject NavigationManager Navigation
 @inject IHttpContextAccessor HttpContextAccessor
+@inject ISnackbar Snackbar
 
 <PageTitle>Login - Admin</PageTitle>
 
-<div class="login-container">
-    <div class="login-background">
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
-        </div>
-    </div>
-    
-    <div class="md-container">
-        <div class="md-row md-justify-content-center">
-            <div class="md-col-6 md-col-md-4">
-                <div class="login-card">
-                    <div class="login-card-header">
-                        <div class="logo-container">
-                            <div class="logo-circle">
-                                <span class="material-icons md-font-size-3xl">coffee</span>
-                            </div>
-                        </div>
-                        <h3 class="login-title">Welcome Back</h3>
-                        <p class="login-subtitle">Sign in to your RuomRa Coffee Admin account</p>
-                    </div>
-                    
-                    <div class="login-card-body">
-                        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
-
-                            <div class="md-text-field enhanced-text-field">
-                                <InputText id="email" @bind-Value="loginModel.Email" placeholder=" " />
-                                <label for="email">
-                                    <span class="material-icons md-font-size-sm" style="margin-right: 0.25rem;">email</span>
-                                    Email
-                                </label>
-                                <ValidationMessage For="@(() => loginModel.Email)" />
-                            </div>
-
-                            <div class="md-text-field enhanced-text-field">
-                                <InputText type="password" id="password" @bind-Value="loginModel.Password" placeholder=" " />
-                                <label for="password">
-                                    <span class="material-icons md-font-size-sm" style="margin-right: 0.25rem;">lock</span>
-                                    Password
-                                </label>
-                                <ValidationMessage For="@(() => loginModel.Password)" />
-                            </div>
-
-                            <div class="login-options">
-                                <div class="md-d-flex md-align-items-center remember-me">
-                                    <InputCheckbox id="rememberMe" @bind-Value="loginModel.RememberMe" />
-                                    <label for="rememberMe">
-                                        Remember me
-                                    </label>
-                                </div>
-                                <a href="#" class="forgot-password">Forgot password?</a>
-                            </div>
-
-                            @if (!string.IsNullOrEmpty(errorMessage))
-                            {
-                                <div class="error-alert">
-                                    <div class="md-d-flex md-align-items-center">
-                                        <span class="material-icons" style="margin-right: 0.5rem;">error</span>
-                                        @errorMessage
-                                    </div>
-                                </div>
-                            }
-
-                            <div class="login-actions">
-                                <button type="submit" class="md-btn md-btn-primary login-btn" disabled="@isLoading">
-                                    @if (isLoading)
-                                    {
-                                        <div class="md-d-flex md-align-items-center md-justify-content-center">
-                                            <div class="md-spinner" style="width: 20px; height: 20px; border-width: 2px; margin-right: 0.5rem;"></div>
-                                            <span>Signing in...</span>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="md-d-flex md-align-items-center md-justify-content-center">
-                                            <span class="material-icons" style="margin-right: 0.25rem;">login</span>
-                                            <span>Sign In</span>
-                                        </div>
-                                    }
-                                </button>
-                            </div>
-                        </EditForm>
-                        
-                        <div class="login-divider">
-                            <span>or</span>
-                        </div>
-                        
-                        <div class="social-login">
-                            <button class="md-btn md-btn-outlined social-btn">
-                                <span class="material-icons" style="margin-right: 0.25rem;">google</span>
-                                Continue with Google
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="login-footer">
-                        <p>Don't have an account? <a href="#" class="signup-link">Contact Administrator</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .login-container {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .login-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-    }
-    
-    .floating-shapes {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-    
-    .shape {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        animation: float 6s ease-in-out infinite;
-    }
-    
-    .shape-1 {
-        width: 80px;
-        height: 80px;
-        top: 20%;
-        left: 10%;
-        animation-delay: 0s;
-    }
-    
-    .shape-2 {
-        width: 120px;
-        height: 120px;
-        top: 60%;
-        right: 10%;
-        animation-delay: 2s;
-    }
-    
-    .shape-3 {
-        width: 60px;
-        height: 60px;
-        bottom: 20%;
-        left: 20%;
-        animation-delay: 4s;
-    }
-    
-    .shape-4 {
-        width: 100px;
-        height: 100px;
-        top: 40%;
-        left: 50%;
-        animation-delay: 1s;
-    }
-    
-    @@keyframes float {
-        0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-        }
-        50% {
-            transform: translateY(-20px) rotate(180deg);
-        }
-    }
-    
-    .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: var(--md-radius-xl);
-        box-shadow: var(--md-elevation-8);
-        padding: 2rem;
-        margin-top: 2rem;
-        position: relative;
-        z-index: 2;
-        animation: slideInUp 0.8s ease-out;
-    }
-    
-    @@keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .login-card-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    
-    .logo-container {
-        margin-bottom: 1rem;
-    }
-    
-    .logo-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-dark) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        margin: 0 auto;
-        box-shadow: var(--md-elevation-4);
-    }
-    
-    .login-title {
-        font-size: var(--md-font-size-2xl);
-        font-weight: 600;
-        color: var(--md-gray-900);
-        margin-bottom: 0.5rem;
-    }
-    
-    .login-subtitle {
-        color: var(--md-gray-600);
-        margin: 0;
-    }
-    
-    .enhanced-text-field {
-        margin-bottom: 1.5rem;
-        position: relative;
-    }
-    
-    .enhanced-text-field label {
-        display: flex;
-        align-items: center;
-        color: var(--md-gray-700);
-    }
-    
-    .enhanced-text-field input {
-        border: 2px solid var(--md-gray-300);
-        border-radius: var(--md-radius-md);
-        padding: 0.75rem 1rem;
-        font-size: var(--md-font-size-md);
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.8);
-    }
-    
-    .enhanced-text-field input:focus {
-        border-color: var(--md-primary);
-        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-        background: white;
-    }
-    
-    .login-options {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    .remember-me {
-        gap: 0.5rem;
-    }
-    
-    .remember-me label {
-        color: var(--md-gray-700);
-        font-size: var(--md-font-size-sm);
-    }
-    
-    .forgot-password {
-        color: var(--md-primary);
-        text-decoration: none;
-        font-size: var(--md-font-size-sm);
-        transition: color 0.2s ease;
-    }
-    
-    .forgot-password:hover {
-        color: var(--md-primary-dark);
-    }
-    
-    .error-alert {
-        background: rgba(244, 67, 54, 0.1);
-        border: 1px solid var(--md-error);
-        color: var(--md-error);
-        padding: 0.75rem;
-        border-radius: var(--md-radius-md);
-        margin-bottom: 1.5rem;
-        font-size: var(--md-font-size-sm);
-    }
-    
-    .login-actions {
-        margin-bottom: 1.5rem;
-    }
-    
-    .login-btn {
-        width: 100%;
-        height: 48px;
-        border-radius: var(--md-radius-md);
-        font-size: var(--md-font-size-md);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-dark) 100%);
-        border: none;
-        transition: all 0.3s ease;
-    }
-    
-    .login-btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: var(--md-elevation-4);
-    }
-    
-    .login-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-    
-    .login-divider {
-        text-align: center;
-        margin: 1.5rem 0;
-        position: relative;
-    }
-    
-    .login-divider::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: var(--md-gray-300);
-    }
-    
-    .login-divider span {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 0 1rem;
-        color: var(--md-gray-600);
-        font-size: var(--md-font-size-sm);
-    }
-    
-    .social-login {
-        margin-bottom: 1.5rem;
-    }
-    
-    .social-btn {
-        width: 100%;
-        height: 48px;
-        border-radius: var(--md-radius-md);
-        border: 2px solid var(--md-gray-300);
-        background: white;
-        color: var(--md-gray-700);
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-    
-    .social-btn:hover {
-        border-color: var(--md-primary);
-        color: var(--md-primary);
-        transform: translateY(-1px);
-        box-shadow: var(--md-elevation-2);
-    }
-    
-    .login-footer {
-        text-align: center;
-        padding-top: 1rem;
-        border-top: 1px solid var(--md-gray-200);
-    }
-    
-    .login-footer p {
-        color: var(--md-gray-600);
-        font-size: var(--md-font-size-sm);
-        margin: 0;
-    }
-    
-    .signup-link {
-        color: var(--md-primary);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-    
-    .signup-link:hover {
-        color: var(--md-primary-dark);
-    }
-    
-    @@media (max-width: 768px) {
-        .login-card {
-            margin: 1rem;
-            padding: 1.5rem;
-        }
-        
-        .login-options {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-    }
-</style>
+<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
+    <MudPaper Class="pa-6" Elevation="3">
+        <MudStack AlignItems="Center" Spacing="4">
+            <MudAvatar Color="Color.Primary" Size="Size.Large">
+                <MudIcon Icon="@Icons.Material.Filled.Coffee" />
+            </MudAvatar>
+            
+            <MudText Typo="Typo.h4" Class="text-center">Welcome Back</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary" Class="text-center">
+                Sign in to your RuomRa Coffee Admin account
+            </MudText>
+            
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin" Class="w-100">
+                <DataAnnotationsValidator />
+                
+                <MudTextField @bind-Value="loginModel.Email" 
+                             Label="Email" 
+                             Variant="Variant.Outlined" 
+                             Adornment="Adornment.Start" 
+                             AdornmentIcon="@Icons.Material.Filled.Email"
+                             Class="mb-3" />
+                
+                <MudTextField @bind-Value="loginModel.Password" 
+                             Label="Password" 
+                             Variant="Variant.Outlined" 
+                             Adornment="Adornment.Start" 
+                             AdornmentIcon="@Icons.Material.Filled.Lock"
+                             InputType="InputType.Password"
+                             Class="mb-3" />
+                
+                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="Center" Class="mb-4">
+                    <MudCheckBox @bind-Checked="loginModel.RememberMe" Label="Remember me" />
+                    <MudLink Href="#" Color="Color.Primary">Forgot password?</MudLink>
+                </MudStack>
+                
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Error" Class="mr-2" />
+                        @errorMessage
+                    </MudAlert>
+                }
+                
+                <MudButton ButtonType="ButtonType.Submit" 
+                           Variant="Variant.Filled" 
+                           Color="Color.Primary" 
+                           FullWidth="true"
+                           Disabled="@isLoading"
+                           Class="mb-3">
+                    @if (isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Signing in...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Login" Class="mr-2" />
+                        <span>Sign In</span>
+                    }
+                </MudButton>
+            </EditForm>
+            
+            <MudDivider Class="my-4" />
+            
+            <MudButton Variant="Variant.Outlined" 
+                       FullWidth="true"
+                       StartIcon="@Icons.Material.Filled.Google">
+                Continue with Google
+            </MudButton>
+            
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                Don't have an account? <MudLink Href="#" Color="Color.Primary">Contact Administrator</MudLink>
+            </MudText>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
 
 @code {
     private LoginModel loginModel = new();
@@ -439,10 +109,12 @@
             // TODO: Implement actual login logic
             // For now, just redirect to dashboard
             Navigation.NavigateTo("/");
+            Snackbar.Add("Login successful!", Severity.Success);
         }
         catch (Exception ex)
         {
             errorMessage = "Login failed. Please check your credentials.";
+            Snackbar.Add("Login failed", Severity.Error);
         }
         finally
         {
