@@ -8,39 +8,17 @@ using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuration
-builder.Services.Configure<ApiSettings>(
-    builder.Configuration.GetSection("ApiSettings"));
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
-var apiSettings = builder.Configuration.GetSection("ApiSettings").Get<ApiSettings>();
-
-if (apiSettings == null || string.IsNullOrEmpty(apiSettings.BaseUrl))
-{
-    throw new InvalidOperationException("ApiSettings:BaseUrl is not configured");
-}
+// MudBlazor
+builder.Services.AddMudServices();
 
 // HTTP Client
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri(apiSettings.BaseUrl);
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-// Authentication
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/login";
-        options.AccessDeniedPath = "/forbidden";
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
-        options.SlidingExpiration = true;
-    });
-
-// Authorization
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Admin"));
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7001/");
 });
 
 // Services
@@ -48,15 +26,23 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<StaffService>();
 
 // Add services to the container
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
+    });
 
-// MudBlazor
-builder.Services.AddMudServices();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("Admin"));
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -65,13 +51,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapBlazorHub();
-app.MapRazorPages();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
