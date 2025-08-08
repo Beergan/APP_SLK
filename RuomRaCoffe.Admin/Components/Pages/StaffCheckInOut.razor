@@ -1,0 +1,463 @@
+@page "/staff/checkin"
+@using RuomRaCoffe.Admin.Services
+@using RuomRaCoffe.API.Data.Entities
+@using RuomRaCoffe.Shared.Dtos
+@inject StaffService StaffService
+@inject NavigationManager Navigation
+
+<PageTitle>Staff Check In/Out</PageTitle>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="bi bi-clock-fill me-2"></i>Staff Check In/Out</h1>
+                <button class="btn btn-outline-secondary" @onclick="() => Navigation.NavigateTo("/staff")">
+                    <i class="bi bi-arrow-left"></i> Back to Staff
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Time Display -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h2 class="mb-0">@currentTime.ToString("dddd, MMMM dd, yyyy")</h2>
+                    <h1 class="display-4 mb-0">@currentTime.ToString("HH:mm:ss")</h1>
+                    <small>@currentTime.ToString("tt")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Check In/Out -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-search me-2"></i>Find Staff</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Search Staff</label>
+                        <input type="text" class="form-control" @bind="searchTerm" @bind:event="oninput" 
+                               placeholder="Enter staff name, email, or ID..." />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Or Select from List</label>
+                        <select class="form-select" @bind="selectedStaffId">
+                            <option value="">Choose staff member...</option>
+                            @if (staffList != null)
+                            {
+                                @foreach (var staff in filteredStaff)
+                                {
+                                    <option value="@staff.Id">@staff.Name - @staff.Role</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" @onclick="FindStaff">
+                        <i class="bi bi-search"></i> Find Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            @if (selectedStaff != null)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person-fill me-2"></i>Staff Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="avatar-lg mx-auto mb-3">
+                                    <div class="avatar-title bg-primary rounded-circle fs-1">
+                                        @selectedStaff.Name.Substring(0, 1).ToUpper()
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <h5>@selectedStaff.Name</h5>
+                                <p class="text-muted mb-1">@selectedStaff.Email</p>
+                                <p class="text-muted mb-2">@selectedStaff.Phone</p>
+                                <span class="badge bg-secondary">@selectedStaff.Role</span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Status</small>
+                                <div>
+                                    @if (selectedStaff.IsCurrentlyWorking)
+                                    {
+                                        <span class="badge bg-success">Currently Working</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Available</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Last Check In</small>
+                                <div>
+                                    @if (selectedStaff.LastCheckIn.HasValue)
+                                    {
+                                        <small>@selectedStaff.LastCheckIn.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">Never</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Check In/Out Actions -->
+    @if (selectedStaff != null)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Check In/Out Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Note (Optional)</label>
+                                    <textarea class="form-control" rows="3" @bind="note" 
+                                              placeholder="Add any notes about this check in/out..."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-grid gap-2">
+                                    @if (selectedStaff.IsCurrentlyWorking)
+                                    {
+                                        <button class="btn btn-danger btn-lg" @onclick="CheckOut">
+                                            <i class="bi bi-clock-out"></i> Check Out
+                                        </button>
+                                        <small class="text-muted text-center">
+                                            Staff is currently working. Click to check out.
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-success btn-lg" @onclick="CheckIn">
+                                            <i class="bi bi-clock-in"></i> Check In
+                                        </button>
+                                        <small class="text-muted text-center">
+                                            Staff is available. Click to check in.
+                                        </small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-activity me-2"></i>Recent Check In/Out Activity</h5>
+                </div>
+                <div class="card-body">
+                    @if (isLoadingRecent)
+                    {
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Staff</th>
+                                        <th>Action</th>
+                                        <th>Time</th>
+                                        <th>Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (recentActivity != null)
+                                    {
+                                        @foreach (var activity in recentActivity)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-sm me-2">
+                                                            <div class="avatar-title bg-primary rounded-circle">
+                                                                @activity.UserName.Substring(0, 1).ToUpper()
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0">@activity.UserName</h6>
+                                                            <small class="text-muted">@activity.UserId.ToString().Substring(0, 8)...</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if (activity.CheckOutTime.HasValue)
+                                                    {
+                                                        <span class="badge bg-danger">Check Out</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-success">Check In</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (activity.CheckOutTime.HasValue)
+                                                    {
+                                                        <small>@activity.CheckOutTime.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small>@activity.CheckInTime.ToString("MM/dd/yyyy HH:mm")</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(activity.Note))
+                                                    {
+                                                        <small>@activity.Note</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted">No note</small>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<StaffDto>? staffList;
+    private List<StaffDto>? filteredStaff;
+    private StaffDto? selectedStaff;
+    private List<ShiftRecordDto>? recentActivity;
+    private bool isLoadingRecent = true;
+    private string searchTerm = "";
+    private Guid selectedStaffId;
+    private string note = "";
+    private DateTime currentTime = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStaff();
+        await LoadRecentActivity();
+        StartTimer();
+    }
+
+    private void StartTimer()
+    {
+        var timer = new System.Threading.Timer(_ =>
+        {
+            currentTime = DateTime.Now;
+            InvokeAsync(StateHasChanged);
+        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+    }
+
+    private async Task LoadStaff()
+    {
+        try
+        {
+            // TODO: Replace with actual API call
+            staffList = new List<StaffDto>
+            {
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "John Doe",
+                    Email = "john@example.com",
+                    Phone = "0123456789",
+                    Role = "Manager",
+                    IsActive = true,
+                    IsCurrentlyWorking = true,
+                    LastCheckIn = DateTime.Now.AddHours(-2),
+                    LastCheckOut = null,
+                    CreatedAt = DateTime.Now.AddDays(-30)
+                },
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Jane Smith",
+                    Email = "jane@example.com",
+                    Phone = "0987654321",
+                    Role = "Staff",
+                    IsActive = true,
+                    IsCurrentlyWorking = false,
+                    LastCheckIn = DateTime.Now.AddDays(-1),
+                    LastCheckOut = DateTime.Now.AddDays(-1).AddHours(8),
+                    CreatedAt = DateTime.Now.AddDays(-15)
+                }
+            };
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading staff: {ex.Message}");
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        if (staffList == null) return;
+
+        filteredStaff = staffList.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            filteredStaff = filteredStaff.Where(s => 
+                s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        filteredStaff = filteredStaff.ToList();
+    }
+
+    private async Task LoadRecentActivity()
+    {
+        try
+        {
+            isLoadingRecent = true;
+            // TODO: Replace with actual API call
+            recentActivity = new List<ShiftRecordDto>
+            {
+                new ShiftRecordDto
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
+                    UserName = "John Doe",
+                    CheckInTime = DateTime.Now.AddHours(-2),
+                    CheckOutTime = null,
+                    Note = "Morning shift",
+                    CreatedAt = DateTime.Now.AddHours(-2)
+                },
+                new ShiftRecordDto
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
+                    UserName = "Jane Smith",
+                    CheckInTime = DateTime.Now.AddDays(-1),
+                    CheckOutTime = DateTime.Now.AddDays(-1).AddHours(8),
+                    Note = "Regular shift",
+                    CreatedAt = DateTime.Now.AddDays(-1)
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading recent activity: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingRecent = false;
+        }
+    }
+
+    private void FindStaff()
+    {
+        if (selectedStaffId != Guid.Empty)
+        {
+            selectedStaff = staffList?.FirstOrDefault(s => s.Id == selectedStaffId);
+        }
+        else if (!string.IsNullOrEmpty(searchTerm))
+        {
+            selectedStaff = filteredStaff?.FirstOrDefault();
+        }
+    }
+
+    private async Task CheckIn()
+    {
+        if (selectedStaff == null) return;
+
+        try
+        {
+            // TODO: Implement actual API call
+            // await StaffService.CheckInAsync(selectedStaff.Id, note);
+            
+            // Update local state
+            selectedStaff.IsCurrentlyWorking = true;
+            selectedStaff.LastCheckIn = DateTime.Now;
+            
+            // Clear form
+            note = "";
+            selectedStaff = null;
+            selectedStaffId = Guid.Empty;
+            
+            // Reload data
+            await LoadStaff();
+            await LoadRecentActivity();
+            
+            // TODO: Show success message
+            Console.WriteLine("Check in successful");
+        }
+        catch (Exception ex)
+        {
+            // TODO: Show error message
+            Console.WriteLine($"Check in failed: {ex.Message}");
+        }
+    }
+
+    private async Task CheckOut()
+    {
+        if (selectedStaff == null) return;
+
+        try
+        {
+            // TODO: Implement actual API call
+            // await StaffService.CheckOutAsync(selectedStaff.Id, note);
+            
+            // Update local state
+            selectedStaff.IsCurrentlyWorking = false;
+            selectedStaff.LastCheckOut = DateTime.Now;
+            
+            // Clear form
+            note = "";
+            selectedStaff = null;
+            selectedStaffId = Guid.Empty;
+            
+            // Reload data
+            await LoadStaff();
+            await LoadRecentActivity();
+            
+            // TODO: Show success message
+            Console.WriteLine("Check out successful");
+        }
+        catch (Exception ex)
+        {
+            // TODO: Show error message
+            Console.WriteLine($"Check out failed: {ex.Message}");
+        }
+    }
+} 

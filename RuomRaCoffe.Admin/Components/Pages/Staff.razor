@@ -1,0 +1,376 @@
+@page "/staff"
+@using RuomRaCoffe.Admin.Services
+@using RuomRaCoffe.API.Data.Entities
+@using RuomRaCoffe.Shared.Dtos
+@inject StaffService StaffService
+@inject NavigationManager Navigation
+
+<PageTitle>Staff Management</PageTitle>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="bi bi-people-fill me-2"></i>Staff Management</h1>
+                <div>
+                    <button class="btn btn-success me-2" @onclick="() => Navigation.NavigateTo("/staff/checkin")">
+                        <i class="bi bi-clock-in"></i> Check In/Out
+                    </button>
+                    <button class="btn btn-primary" @onclick="ShowCreateModal">
+                        <i class="bi bi-plus"></i> Add New Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">Total Staff</h4>
+                            <h2>@(staffList?.Count ?? 0)</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-people-fill fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">Currently Working</h4>
+                            <h2>@(staffList?.Count(s => s.IsCurrentlyWorking) ?? 0)</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-clock-fill fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">Active Staff</h4>
+                            <h2>@(staffList?.Count(s => s.IsActive) ?? 0)</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-person-check-fill fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">On Leave</h4>
+                            <h2>@(staffList?.Count(s => !s.IsCurrentlyWorking && s.IsActive) ?? 0)</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-person-x-fill fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-control" @bind="searchTerm" @bind:event="oninput" placeholder="Search by name or email..." />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" @bind="statusFilter">
+                                <option value="">All</option>
+                                <option value="working">Currently Working</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" @bind="roleFilter">
+                                <option value="">All Roles</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Staff">Staff</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary me-2" @onclick="ClearFilters">
+                                <i class="bi bi-arrow-clockwise"></i> Clear
+                            </button>
+                            <button class="btn btn-primary" @onclick="LoadStaff">
+                                <i class="bi bi-search"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Table -->
+    @if (isLoading)
+    {
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Last Check In</th>
+                                        <th>Last Check Out</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (filteredStaff != null)
+                                    {
+                                        @foreach (var staff in filteredStaff)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-sm me-2">
+                                                            <div class="avatar-title bg-primary rounded-circle">
+                                                                @staff.Name.Substring(0, 1).ToUpper()
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0">@staff.Name</h6>
+                                                            <small class="text-muted">ID: @staff.Id.ToString().Substring(0, 8)...</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>@staff.Email</td>
+                                                <td>@staff.Phone</td>
+                                                <td>
+                                                    <span class="badge bg-secondary">@staff.Role</span>
+                                                </td>
+                                                <td>
+                                                    @if (staff.IsCurrentlyWorking)
+                                                    {
+                                                        <span class="badge bg-success">Working</span>
+                                                    }
+                                                    else if (staff.IsActive)
+                                                    {
+                                                        <span class="badge bg-warning">Available</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Inactive</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (staff.LastCheckIn.HasValue)
+                                                    {
+                                                        <small>@staff.LastCheckIn.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted">Never</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (staff.LastCheckOut.HasValue)
+                                                    {
+                                                        <small>@staff.LastCheckOut.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted">Never</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewStaff(staff.Id)" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditStaff(staff.Id)" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-info" @onclick="() => ViewShiftHistory(staff.Id)" title="Shift History">
+                                                            <i class="bi bi-clock-history"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteStaff(staff.Id)" title="Delete">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<StaffDto>? staffList;
+    private List<StaffDto>? filteredStaff;
+    private bool isLoading = true;
+    private string searchTerm = "";
+    private string statusFilter = "";
+    private string roleFilter = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStaff();
+    }
+
+    private async Task LoadStaff()
+    {
+        try
+        {
+            isLoading = true;
+            // TODO: Replace with actual API call when backend is ready
+            staffList = new List<StaffDto>
+            {
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "John Doe",
+                    Email = "john@example.com",
+                    Phone = "0123456789",
+                    Role = "Manager",
+                    IsActive = true,
+                    IsCurrentlyWorking = true,
+                    LastCheckIn = DateTime.Now.AddHours(-2),
+                    LastCheckOut = null,
+                    CreatedAt = DateTime.Now.AddDays(-30)
+                },
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Jane Smith",
+                    Email = "jane@example.com",
+                    Phone = "0987654321",
+                    Role = "Staff",
+                    IsActive = true,
+                    IsCurrentlyWorking = false,
+                    LastCheckIn = DateTime.Now.AddDays(-1),
+                    LastCheckOut = DateTime.Now.AddDays(-1).AddHours(8),
+                    CreatedAt = DateTime.Now.AddDays(-15)
+                }
+            };
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            // TODO: Add proper error handling with toast notification
+            Console.WriteLine($"Error loading staff: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        if (staffList == null) return;
+
+        filteredStaff = staffList.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            filteredStaff = filteredStaff.Where(s => 
+                s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrEmpty(statusFilter))
+        {
+            filteredStaff = statusFilter switch
+            {
+                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking),
+                "active" => filteredStaff.Where(s => s.IsActive),
+                "inactive" => filteredStaff.Where(s => !s.IsActive),
+                _ => filteredStaff
+            };
+        }
+
+        if (!string.IsNullOrEmpty(roleFilter))
+        {
+            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter);
+        }
+
+        filteredStaff = filteredStaff.ToList();
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = "";
+        statusFilter = "";
+        roleFilter = "";
+        ApplyFilters();
+    }
+
+    private void ShowCreateModal()
+    {
+        Navigation.NavigateTo("/staff/create");
+    }
+
+    private void ViewStaff(Guid id)
+    {
+        Navigation.NavigateTo($"/staff/{id}");
+    }
+
+    private void EditStaff(Guid id)
+    {
+        Navigation.NavigateTo($"/staff/{id}/edit");
+    }
+
+    private void ViewShiftHistory(Guid id)
+    {
+        Navigation.NavigateTo($"/staff/{id}/shifts");
+    }
+
+    private async Task DeleteStaff(Guid id)
+    {
+        // TODO: Implement delete confirmation and API call
+        Console.WriteLine($"Delete staff with ID: {id}");
+    }
+} 

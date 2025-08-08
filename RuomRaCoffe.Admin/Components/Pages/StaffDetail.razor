@@ -1,0 +1,340 @@
+@page "/staff/{Id:guid}"
+@using RuomRaCoffe.Admin.Services
+@using RuomRaCoffe.API.Data.Entities
+@using RuomRaCoffe.Shared.Dtos
+@inject StaffService StaffService
+@inject NavigationManager Navigation
+
+<PageTitle>Staff Detail</PageTitle>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="bi bi-person-fill me-2"></i>Staff Detail</h1>
+                <div>
+                    <button class="btn btn-outline-secondary me-2" @onclick="() => Navigation.NavigateTo("/staff")">
+                        <i class="bi bi-arrow-left"></i> Back to Staff
+                    </button>
+                    <button class="btn btn-primary" @onclick="EditStaff">
+                        <i class="bi bi-pencil"></i> Edit Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (staff != null)
+    {
+        <div class="row">
+            <!-- Staff Information -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="avatar-lg mx-auto mb-3">
+                            <div class="avatar-title bg-primary rounded-circle fs-1">
+                                @staff.Name.Substring(0, 1).ToUpper()
+                            </div>
+                        </div>
+                        <h4>@staff.Name</h4>
+                        <p class="text-muted">@staff.Role</p>
+                        <div class="mb-3">
+                            @if (staff.IsCurrentlyWorking)
+                            {
+                                <span class="badge bg-success">Currently Working</span>
+                            }
+                            else if (staff.IsActive)
+                            {
+                                <span class="badge bg-warning">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactive</span>
+                            }
+                        </div>
+                        <hr />
+                        <div class="text-start">
+                            <div class="mb-2">
+                                <small class="text-muted">Email</small>
+                                <div>@staff.Email</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Phone</small>
+                                <div>@staff.Phone</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Member Since</small>
+                                <div>@staff.CreatedAt.ToString("MMM dd, yyyy")</div>
+                            </div>
+                            @if (staff.LastCheckIn.HasValue)
+                            {
+                                <div class="mb-2">
+                                    <small class="text-muted">Last Check In</small>
+                                    <div>@staff.LastCheckIn.Value.ToString("MMM dd, yyyy HH:mm")</div>
+                                </div>
+                            }
+                            @if (staff.LastCheckOut.HasValue)
+                            {
+                                <div class="mb-2">
+                                    <small class="text-muted">Last Check Out</small>
+                                    <div>@staff.LastCheckOut.Value.ToString("MMM dd, yyyy HH:mm")</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Shift History</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (shiftHistory != null && shiftHistory.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Check In</th>
+                                            <th>Check Out</th>
+                                            <th>Duration</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var shift in shiftHistory)
+                                        {
+                                            <tr>
+                                                <td>@shift.CheckInTime.ToString("MMM dd, yyyy")</td>
+                                                <td>@shift.CheckInTime.ToString("HH:mm")</td>
+                                                <td>
+                                                    @if (shift.CheckOutTime.HasValue)
+                                                    {
+                                                        @shift.CheckOutTime.Value.ToString("HH:mm")
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (shift.WorkDuration.HasValue)
+                                                    {
+                                                        @shift.WorkDuration.Value.ToString(@"hh\:mm")
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(shift.Note))
+                                                    {
+                                                        <small>@shift.Note</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small class="text-muted">No note</small>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <i class="bi bi-clock fs-1 text-muted"></i>
+                                <p class="text-muted mt-2">No shift history available</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Total Shifts</h6>
+                                <h3>@(shiftHistory?.Count ?? 0)</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-calendar-check fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Total Hours</h6>
+                                <h3>@totalHours.ToString("F1")</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-clock-history fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Avg. Shift</h6>
+                                <h3>@averageShiftHours.ToString("F1")h</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-graph-up fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">This Month</h6>
+                                <h3>@thisMonthShifts</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="bi bi-calendar-month fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-person-x fs-1 text-muted"></i>
+            <h3 class="mt-3">Staff Not Found</h3>
+            <p class="text-muted">The staff member you're looking for doesn't exist.</p>
+            <button class="btn btn-primary" @onclick="() => Navigation.NavigateTo("/staff")">
+                Back to Staff List
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private StaffDto? staff;
+    private List<ShiftRecordDto>? shiftHistory;
+    private bool isLoading = true;
+    private double totalHours = 0;
+    private double averageShiftHours = 0;
+    private int thisMonthShifts = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStaffDetail();
+    }
+
+    private async Task LoadStaffDetail()
+    {
+        try
+        {
+            isLoading = true;
+            
+            // TODO: Replace with actual API calls
+            staff = new StaffDto
+            {
+                Id = Id,
+                Name = "John Doe",
+                Email = "john@example.com",
+                Phone = "0123456789",
+                Role = "Manager",
+                IsActive = true,
+                IsCurrentlyWorking = true,
+                LastCheckIn = DateTime.Now.AddHours(-2),
+                LastCheckOut = null,
+                CreatedAt = DateTime.Now.AddDays(-30)
+            };
+
+            shiftHistory = new List<ShiftRecordDto>
+            {
+                new ShiftRecordDto
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Id,
+                    UserName = staff.Name,
+                    CheckInTime = DateTime.Now.AddDays(-1).AddHours(8),
+                    CheckOutTime = DateTime.Now.AddDays(-1).AddHours(16),
+                    Note = "Regular shift",
+                    WorkDuration = TimeSpan.FromHours(8),
+                    CreatedAt = DateTime.Now.AddDays(-1)
+                },
+                new ShiftRecordDto
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Id,
+                    UserName = staff.Name,
+                    CheckInTime = DateTime.Now.AddDays(-2).AddHours(9),
+                    CheckOutTime = DateTime.Now.AddDays(-2).AddHours(17),
+                    Note = "Late start",
+                    WorkDuration = TimeSpan.FromHours(8),
+                    CreatedAt = DateTime.Now.AddDays(-2)
+                }
+            };
+
+            CalculateStatistics();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading staff detail: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void CalculateStatistics()
+    {
+        if (shiftHistory == null) return;
+
+        var completedShifts = shiftHistory.Where(s => s.WorkDuration.HasValue).ToList();
+        
+        totalHours = completedShifts.Sum(s => s.WorkDuration!.Value.TotalHours);
+        averageShiftHours = completedShifts.Any() ? totalHours / completedShifts.Count : 0;
+        
+        var thisMonth = DateTime.Now.Month;
+        thisMonthShifts = shiftHistory.Count(s => s.CheckInTime.Month == thisMonth);
+    }
+
+    private void EditStaff()
+    {
+        Navigation.NavigateTo($"/staff/{Id}/edit");
+    }
+} 

@@ -42,6 +42,7 @@ builder.Services.AddAuthorization(options =>
 
 // Services
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<StaffService>();
 
 // Add services to the container
 builder.Services.AddRazorPages();
