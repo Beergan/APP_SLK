@@ -51,7 +51,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+builder.Services.AddMudServices();
 app.UseRouting();
 
 app.UseAuthentication();
