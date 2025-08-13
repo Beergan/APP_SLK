@@ -1,4 +1,4 @@
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Json;
 using RuomRaCoffe.API.Data.Entities;
 using RuomRaCoffe.Shared.Dtos;
@@ -41,12 +41,21 @@ public class StaffService
         }
     }
 
-    public async Task<User> CreateStaffAsync(CreateStaffDto createStaffDto)
+    public async Task<User> CreateStaffAsync(User createStaffDto)
     {
         try
         {
             var response = await _httpClient.PostAsJsonAsync("api/User/staff", createStaffDto);
-            response.EnsureSuccessStatusCode();
+
+            // Nếu không thành công, đọc content để xem lý do
+            if (!response.IsSuccessStatusCode)
+            {
+                // Dòng này sẽ chứa thông tin chi tiết về lỗi
+                var errorContent = await response.Content.ReadAsStringAsync();
+                // Hãy debug và xem giá trị của errorContent ở đây
+                throw new Exception($"API returned {(int)response.StatusCode} ({response.ReasonPhrase}): {errorContent}");
+            }
+
             var result = await response.Content.ReadFromJsonAsync<User>();
             return result ?? throw new Exception("API returned null for staff creation.");
         }
@@ -55,6 +64,7 @@ public class StaffService
             throw new Exception($"Failed to create staff: {ex.Message}");
         }
     }
+
 
     public async Task<User> UpdateStaffAsync(Guid id, UpdateStaffDto updateStaffDto)
     {

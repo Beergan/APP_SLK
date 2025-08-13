@@ -6,7 +6,6 @@ namespace RuomRaCoffe.API.Data.Entities;
 public class OrderItem
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; } = Guid.NewGuid();
     
     public Guid OrderId { get; set; }

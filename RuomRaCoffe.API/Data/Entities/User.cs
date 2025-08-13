@@ -8,7 +8,6 @@ namespace RuomRaCoffe.API.Data.Entities;
 public class User
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; } = Guid.NewGuid();
     
     [Required]

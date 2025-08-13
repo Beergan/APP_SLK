@@ -61,6 +61,8 @@ public class DataContext : DbContext
             entity.Property(e => e.Category).HasMaxLength(100);
             entity.Property(e => e.Brand).HasMaxLength(100);
             entity.Property(e => e.CategoryName).HasMaxLength(100);
+            entity.Property(e => e.Price).HasPrecision(18, 2);
+            entity.Property(e => e.Discount).HasPrecision(18, 2);
         });
 
         // Configure Order entity
@@ -69,7 +71,8 @@ public class DataContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Status).HasMaxLength(50);
-            
+            entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
+
             entity.HasOne(e => e.User)
                   .WithMany()
                   .HasForeignKey(e => e.UserId)
@@ -81,7 +84,8 @@ public class DataContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            
+            entity.Property(e => e.Price).HasPrecision(18, 2);
+
             entity.HasOne(e => e.Order)
                   .WithMany(o => o.OrderItems)
                   .HasForeignKey(e => e.OrderId)
@@ -99,7 +103,7 @@ public class DataContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Note).HasMaxLength(500);
-            
+
             entity.HasOne(e => e.User)
                   .WithMany()
                   .HasForeignKey(e => e.UserId)
