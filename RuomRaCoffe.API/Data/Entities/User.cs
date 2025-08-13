@@ -6,14 +6,16 @@ namespace RuomRaCoffe.API.Data.Entities;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public class User
-    {[Key]
+{
+    [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    
     [Required]
-
-    public string ? Name { get; set; }
+    public string? Name { get; set; }
+    
     [Required]
-    public string ? Password { get; set; }
+    public string? Password { get; set; }
 
     public string? Email { get; set; }
 
@@ -25,7 +27,8 @@ public class User
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public ICollection<UserRole>? UserRole { get; set; }
 
-    public string ? NameFull { get; set; }
+    public string? NameFull { get; set; }
+    
     private string GetDebuggerDisplay()
     {
         return ToString();

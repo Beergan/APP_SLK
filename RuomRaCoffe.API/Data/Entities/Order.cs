@@ -7,9 +7,11 @@ public class Order
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-    public int UserId { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    
+    public Guid UserId { get; set; }
     public User? User { get; set; }
+    
     public DateTime OrderDate { get; set; } = DateTime.Now;
     public decimal TotalAmount { get; set; }
     public string? Status { get; set; } = "Pending";

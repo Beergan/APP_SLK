@@ -41,16 +41,12 @@ public class StaffService
         }
     }
 
-    public async Task<User> CreateStaffAsync(User staff)
+    public async Task<User> CreateStaffAsync(CreateStaffDto createStaffDto)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/User", staff);
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Failed to create staff. Status code: {response.StatusCode}. Details: {errorContent}");
-            }
+            var response = await _httpClient.PostAsJsonAsync("api/User/staff", createStaffDto);
+            response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<User>();
             return result ?? throw new Exception("API returned null for staff creation.");
         }
@@ -60,11 +56,11 @@ public class StaffService
         }
     }
 
-    public async Task<User> UpdateStaffAsync(Guid id, User staff)
+    public async Task<User> UpdateStaffAsync(Guid id, UpdateStaffDto updateStaffDto)
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/User/{id}", staff);
+            var response = await _httpClient.PutAsJsonAsync($"api/User/{id}", updateStaffDto);
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<User>();
             return result ?? throw new Exception("API returned null for staff update.");
@@ -115,7 +111,7 @@ public class StaffService
     {
         try
         {
-            var checkInData = new { UserId = userId, Note = note };
+            var checkInData = new CheckInOutDto { UserId = userId, Note = note };
             var response = await _httpClient.PostAsJsonAsync("api/ShiftRecord/checkin", checkInData);
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ShiftRecord>();
@@ -131,7 +127,7 @@ public class StaffService
     {
         try
         {
-            var checkOutData = new { UserId = userId, Note = note };
+            var checkOutData = new CheckInOutDto { UserId = userId, Note = note };
             var response = await _httpClient.PostAsJsonAsync("api/ShiftRecord/checkout", checkOutData);
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ShiftRecord>();
@@ -158,24 +154,16 @@ public class StaffService
         }
     }
 
-    // Dashboard Statistics
-    public async Task<object> GetStaffStatisticsAsync(DateTime? fromDate = null, DateTime? toDate = null)
+    public async Task<StaffStatisticsDto> GetStaffStatisticsAsync()
     {
         try
         {
-            var queryParams = new List<string>();
-            if (fromDate.HasValue)
-                queryParams.Add($"fromDate={fromDate.Value:yyyy-MM-dd}");
-            if (toDate.HasValue)
-                queryParams.Add($"toDate={toDate.Value:yyyy-MM-dd}");
-
-            var queryString = queryParams.Count > 0 ? "?" + string.Join("&", queryParams) : "";
-            var result = await _httpClient.GetFromJsonAsync<object>($"api/ShiftRecord/statistics{queryString}");
-            return result ?? new { };
+            var result = await _httpClient.GetFromJsonAsync<StaffStatisticsDto>("api/User/staff/statistics");
+            return result ?? new StaffStatisticsDto();
         }
         catch (HttpRequestException ex)
         {
-            throw new Exception($"Failed to get statistics: {ex.Message}");
+            throw new Exception($"Failed to get staff statistics: {ex.Message}");
         }
     }
 } 
