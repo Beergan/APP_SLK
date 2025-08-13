@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
 using RuomRaCoffe.API.Data;
+using RuomRaCoffe.API.Data.Entities;
 using RuomRaCoffe.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,9 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(connectionString));
+
+// ✅ Đăng ký PasswordHasher trước khi Build
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 // Register services
 builder.Services.AddScoped<ProductService>();
@@ -35,11 +40,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Run migrations
-using var scope = app.Services.CreateScope();
-var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-
-Console.WriteLine("Running migrations...");
-db.Database.Migrate();
-Console.WriteLine("✅ Migration completed.");
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+    Console.WriteLine("Running migrations...");
+    db.Database.Migrate();
+    Console.WriteLine("✅ Migration completed.");
+}
 
 app.Run();

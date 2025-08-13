@@ -2,207 +2,223 @@
 @using RuomRaCoffe.Admin.Services
 @using RuomRaCoffe.API.Data.Entities
 @using RuomRaCoffe.Shared.Dtos
+@using RuomRaCoffe.Shared.Models
 @inject StaffService StaffService
 @inject NavigationManager Navigation
 @using FluentValidation
+@inject ISnackbar Snackbar
 @inject IDialogService DialogService
 <PageTitle>Staff Management</PageTitle>
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudCard>
-        <MudForm Model="@model" @ref="@form" Validation="@(orderValidator.ValidateValue)" ValidationDelay="0">
+        <MudCardHeader>
+            <MudText Typo="Typo.h5" Class="d-flex align-center">
+                <MudIcon Icon="@Icons.Material.Filled.PersonAdd" Class="mr-3" />
+                Create New Staff
+            </MudText>
+        </MudCardHeader>
+
+        <MudForm Model="@staffModel" @ref="@form" Validation="@(staffValidator.ValidateValue)" ValidationDelay="0">
             <MudCardContent>
-                <MudTextField @bind-Value="model.Name"
-                              For="@(() => model.Name)"
-                              Immediate="true"
-                              Label="Name" />
+                <MudGrid>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField @bind-Value="staffModel.Name"
+                                      For="@(() => staffModel.Name)"
+                                      Immediate="true"
+                                      Label="Full Name"
+                                      Required="true"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Person" />
+                    </MudItem>
 
-                <MudTextField @bind-Value="model.Email"
-                              For="@(() => model.Email)"
-                              Immediate="true"
-                              Label="Email" />
+                    <MudItem xs="12" sm="6">
+                        <MudTextField @bind-Value="staffModel.Email"
+                                      For="@(() => staffModel.Email)"
+                                      Immediate="true"
+                                      Label="Email"
+                                      Required="true"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Email" />
+                    </MudItem>
 
-                <MudTextField @bind-Value="model.CCNumber"
-                              For="@(() => model.CCNumber)"
-                              Immediate="true"
-                              Label="Credit card nr" />
+                    <MudItem xs="12" sm="6">
+                        <MudTextField @bind-Value="staffModel.Phone"
+                                      For="@(() => staffModel.Phone)"
+                                      Immediate="true"
+                                      Label="Phone Number"
+                                      Required="true"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Phone" />
+                    </MudItem>
 
-                <MudTextField @bind-Value="model.Address.Address"
-                              For="@(() => model.Address.Address)"
-                              Immediate="true"
-                              Label="Address" />
+                    <MudItem xs="12" sm="6">
+                        <MudSelect @bind-Value="staffModel.Role"
+                                   For="@(() => staffModel.Role)"
+                                   Label="Role"
+                                   Required="true"
+                                   Adornment="Adornment.Start"
+                                   AdornmentIcon="@Icons.Material.Filled.Work">
+                            <MudSelectItem Value="@("Staff")">Staff</MudSelectItem>
+                            <MudSelectItem Value="@("Manager")">Manager</MudSelectItem>
+                            <MudSelectItem Value="@("Admin")">Admin</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
 
-                <MudTextField @bind-Value="model.Address.City"
-                              For="@(() => model.Address.City)"
-                              Immediate="true"
-                              Label="City" />
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="staffModel.Address"
+                                      For="@(() => staffModel.Address)"
+                                      Immediate="true"
+                                      Label="Address"
+                                      Lines="3"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.LocationOn" />
+                    </MudItem>
 
-                <MudTextField @bind-Value="model.Address.Country"
-                              For="@(() => model.Address.Country)"
-                              Immediate="true"
-                              Label="Country" />
+                    <MudItem xs="12" sm="6">
+                        <MudTextField @bind-Value="staffModel.Password"
+                                      For="@(() => staffModel.Password)"
+                                      Immediate="true"
+                                      Label="Password"
+                                      Required="true"
+                                      InputType="InputType.Password"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Lock" />
+                    </MudItem>
+                </MudGrid>
             </MudCardContent>
-            <MudCardContent Class="pa-0">
 
-                <MudTable Items="@model.OrderDetails" Hover="true" Breakpoint="Breakpoint.None" Dense="@true" Elevation="0">
-                    <HeaderContent>
-                        <MudTh>Description</MudTh>
-                        <MudTh>Offer</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Description">
-                            <MudForm Model="@context" Validation=@(orderDetailsValidator.ValidateValue)>
-                                <MudTextField Label="Enter Description"
-                                              @bind-Value="context.Description"
-                                              For="(() => context.Description)" />
-                            </MudForm>
-                        </MudTd>
-                        <MudTd DataLabel="Offer">
-                            <MudForm Model="@context">
-                                <MudNumericField Label="Enter Offer"
-                                                 @bind-Value="context.Offer"
-                                                 Validation=@(orderDetailsValidator.ValidateValue)
-                                                 For="(() => context.Offer)" />
-                            </MudForm>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
-
-            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Secondary"
+                           OnClick="@(() => Navigation.NavigateTo("/staff"))"
+                           StartIcon="@Icons.Material.Filled.ArrowBack">
+                    Cancel
+                </MudButton>
+                <MudSpacer />
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           OnClick="@(async () => await CreateStaffs())"
+                           Disabled="@isLoading"
+                           StartIcon="@Icons.Material.Filled.Save">
+                    @if (isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Creating...</span>
+                    }
+                    else
+                    {
+                        <span>Create Staff</span>
+                    }
+                </MudButton>
+            </MudCardActions>
         </MudForm>
-        <MudCardActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Order</MudButton>
-        </MudCardActions>
     </MudCard>
 </MudContainer>
 @code {
-    [Inject] ISnackbar Snackbar2 { get; set; }
+    private MudForm form;
+    private bool isLoading = false;
+    public UserModel staffModel = new UserModel();
+    private StaffModelFluentValidator staffValidator = new();
 
-    MudForm form;
 
-    OrderModelFluentValidator orderValidator = new OrderModelFluentValidator();
-
-    OrderDetailsModelFluentValidator orderDetailsValidator = new OrderDetailsModelFluentValidator();
-
-    OrderModel model = new OrderModel();
-
-    public class OrderModel
+    public class StaffModelFluentValidator : AbstractValidator<UserModel>
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string CCNumber { get; set; } = "4012 8888 8888 1881";
-        public AddressModel Address { get; set; } = new AddressModel();
-        public List<OrderDetailsModel> OrderDetails = new List<OrderDetailsModel>()
+        public StaffModelFluentValidator()
         {
-            new OrderDetailsModel()
+            RuleFor(x=>x.Name).NotEmpty().WithMessage("Name is required.")
+				.MaximumLength(100).WithMessage("Name cannot exceed 100 characters.");
+                RuleFor(x => x.Email).NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email format.")
+                .MaximumLength(100).WithMessage("Email cannot exceed 100 characters.");
+            RuleFor(x => x.Address).NotNull().WithMessage("Address is required.");
+			RuleFor(x => x.Phone).NotEmpty().WithMessage("Phone is required").MaximumLength(10).WithMessage("Phone cannot exceed 10 characters.");
+        }
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+{
+   var result = await ValidateAsync(
+       ValidationContext<UserModel>.CreateWithOptions(
+           (UserModel)model,
+           x => x.IncludeProperties(propertyName)
+       )
+   );
+
+   if (result.IsValid)
+       return Array.Empty<string>();
+
+    // Nếu không hợp lệ => trả về danh sách lỗi
+   return result.Errors.Select(e => e.ErrorMessage);
+};
+    }
+   
+
+
+    private async Task CreateStaffs()
+    {
+        try
+        {
+            // Validate form
+            await form.Validate();
+
+            if (!form.IsValid)
+            {
+                Snackbar.Add("Please fix validation errors", MudBlazor.Severity.Warning);
+                return;
+            }
+
+            isLoading = true;
+
+            var createStaffDto = new User
+            {
+                Name = staffModel.Name,
+                Email = staffModel.Email,
+                Phone = staffModel.Phone,
+                Role = staffModel.Role,
+                Address = staffModel.Address,
+                Password = staffModel.Password // Lưu ý: Password sẽ được hash ở API
+            };
+
+            var createdStaff = await StaffService.CreateStaffAsync(createStaffDto);
+
+            if (createdStaff != null)
+            {
+                Snackbar.Add($"Staff '{createdStaff.Name}' created successfully!", MudBlazor.Severity.Success);
+
+                var parameters = new DialogParameters
                 {
-                    Description = "Perform Work order 1",
-                    Offer = 100
-                },
-            new OrderDetailsModel()
-        };
-    }
+                    ["ContentText"] = $"Staff '{createdStaff.Name}' has been created successfully. Would you like to create another staff member?",
+                    ["ButtonText"] = "Create Another",
+                    ["Color"] = Color.Primary
+                };
 
-    public class AddressModel
-    {
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
-    }
+                var dialog = await DialogService.ShowMessageBox(
+                    "Success",
+                    $"Staff '{createdStaff.Name}' created successfully!",
+                    yesText: "Create Another",
+                    noText: "Go to Staff List",
+                    cancelText: "Stay Here"
+                );
 
-    public class OrderDetailsModel
-    {
-        public string Description { get; set; }
-        public decimal Offer { get; set; }
-    }
-
-    private async Task Submit()
-    {
-        await form.Validate();
-
-        if (form.IsValid)
+                if (dialog == true)
+                {
+                    // Reset form để tạo nhân sự mới
+                    staffModel = new UserModel();
+                    await form.ResetAsync();
+                }
+                else if (dialog == false)
+                {
+                    Navigation.NavigateTo("/staff");
+                }
+            }
+        }
+        catch (Exception ex)
         {
-            Snackbar.Add("Submitted!");
+            Snackbar.Add($"Error creating staff: {ex.Message}", MudBlazor.Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 
-    /// <summary>
-    /// A standard AbstractValidator which contains multiple rules and can be shared with the back end API
-    /// </summary>
-    /// <typeparam name="OrderModel"></typeparam>
-    public class OrderModelFluentValidator : AbstractValidator<OrderModel>
-    {
-        public OrderModelFluentValidator()
-        {
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                .Length(1, 100);
-
-            RuleFor(x => x.Email)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .EmailAddress()
-                .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value));
-
-            RuleFor(x => x.CCNumber)
-                .NotEmpty()
-                .Length(1, 100)
-                .CreditCard();
-
-            RuleFor(x => x.Address.Address)
-                .NotEmpty()
-                .Length(1, 100);
-
-            RuleFor(x => x.Address.City)
-                .NotEmpty()
-                .Length(1, 100);
-
-            RuleFor(x => x.Address.Country)
-                .NotEmpty()
-                .Length(1, 100);
-
-            RuleForEach(x => x.OrderDetails)
-                .SetValidator(new OrderDetailsModelFluentValidator());
-        }
-
-        private async Task<bool> IsUniqueAsync(string email)
-        {
-            // Simulates a long running http call
-            await Task.Delay(2000);
-            return email.ToLower() != "test@test.com";
-        }
-
-        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-        {
-            var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions((OrderModel)model, x => x.IncludeProperties(propertyName)));
-            if (result.IsValid)
-                return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
-        };
-    }
-
-    /// <summary>
-    /// A standard AbstractValidator for the Collection Object
-    /// </summary>
-    /// <typeparam name="OrderDetailsModel"></typeparam>
-    public class OrderDetailsModelFluentValidator : AbstractValidator<OrderDetailsModel>
-    {
-        public OrderDetailsModelFluentValidator()
-        {
-            RuleFor(x => x.Description)
-                .NotEmpty()
-                .Length(1, 100);
-
-            RuleFor(x => x.Offer)
-                .GreaterThan(0)
-                .LessThan(999);
-        }
-
-        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-        {
-            var result = await ValidateAsync(ValidationContext<OrderDetailsModel>.CreateWithOptions((OrderDetailsModel)model, x => x.IncludeProperties(propertyName)));
-            if (result.IsValid)
-                return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
-        };
-    }
+  
 }

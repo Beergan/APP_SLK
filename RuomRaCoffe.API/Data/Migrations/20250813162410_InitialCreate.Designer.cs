@@ -12,8 +12,8 @@ using RuomRaCoffe.API.Data;
 namespace RuomRaCoffe.API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250808032506_AddShiftRecord")]
-    partial class AddShiftRecord
+    [Migration("20250813162410_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,6 +122,37 @@ namespace RuomRaCoffe.API.Data.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
+            modelBuilder.Entity("RuomRaCoffe.API.Data.Entities.ShiftRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("ShiftRecords", (string)null);
+                });
+
             modelBuilder.Entity("RuomRaCoffe.API.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -221,6 +252,17 @@ namespace RuomRaCoffe.API.Data.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("RuomRaCoffe.API.Data.Entities.ShiftRecord", b =>
+                {
+                    b.HasOne("RuomRaCoffe.API.Data.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RuomRaCoffe.API.Data.Entities.UserRole", b =>

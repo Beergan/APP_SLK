@@ -18,7 +18,7 @@ builder.Services.AddMudServices();
 // HTTP Client
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7001/");
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7110/");
 });
 
 // Services

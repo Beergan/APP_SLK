@@ -46,7 +46,11 @@ public class StaffService
         try
         {
             var response = await _httpClient.PostAsJsonAsync("api/User", staff);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to create staff. Status code: {response.StatusCode}. Details: {errorContent}");
+            }
             var result = await response.Content.ReadFromJsonAsync<User>();
             return result ?? throw new Exception("API returned null for staff creation.");
         }
