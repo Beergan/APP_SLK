@@ -1,0 +1,124 @@
+@page "/login"
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ISnackbar Snackbar
+
+<PageTitle>Login - Admin</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="pa-4">
+    <MudPaper Class="pa-6" Elevation="3">
+        <MudStack AlignItems="AlignItems.Center" Spacing="4">
+            <MudAvatar Color="Color.Primary" Size="Size.Large">
+                <MudIcon Icon="@Icons.Material.Filled.Coffee" />
+            </MudAvatar>
+            
+            <MudText Typo="Typo.h4" Class="text-center">Welcome Back</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary" Class="text-center">
+                Sign in to your RuomRa Coffee Admin account
+            </MudText>
+            
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin" Class="w-100">
+                <DataAnnotationsValidator />
+                
+                <MudTextField @bind-Value="loginModel.Email" 
+                             Label="Email" 
+                             Variant="Variant.Outlined" 
+                             Adornment="Adornment.Start" 
+                             AdornmentIcon="@Icons.Material.Filled.Email"
+                             Class="mb-3" />
+                
+                <MudTextField @bind-Value="loginModel.Password" 
+                             Label="Password" 
+                             Variant="Variant.Outlined" 
+                             Adornment="Adornment.Start" 
+                             AdornmentIcon="@Icons.Material.Filled.Lock"
+                             InputType="InputType.Password"
+                             Class="mb-3" />
+                
+                <MudStack  Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
+                    <MudCheckBox T="string" @bind-Checked="loginModel.RememberMe" Label="Remember me" />
+                    <MudLink Href="#" Color="Color.Primary">Forgot password?</MudLink>
+                </MudStack>
+                
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.Error" Class="mr-2" />
+                        @errorMessage
+                    </MudAlert>
+                }
+                
+                <MudButton ButtonType="ButtonType.Submit" 
+                           Variant="Variant.Filled" 
+                           Color="Color.Primary" 
+                           FullWidth="true"
+                           Disabled="@isLoading"
+                           Class="mb-3">
+                    @if (isLoading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Signing in...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Login" Class="mr-2" />
+                        <span>Sign In</span>
+                    }
+                </MudButton>
+            </EditForm>
+            
+            <MudDivider Class="my-4" />
+            
+            <MudButton Variant="Variant.Outlined" 
+                       FullWidth="true"
+                       StartIcon="@Icons.Material.Filled.Girl">
+                Continue with Google
+            </MudButton>
+            
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                Don't have an account? <MudLink Href="#" Color="Color.Primary">Contact Administrator</MudLink>
+            </MudText>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if user is already authenticated
+        var user = HttpContextAccessor.HttpContext?.User;
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+
+            // TODO: Implement actual login logic
+            // For now, just redirect to dashboard
+            Navigation.NavigateTo("/");
+            Snackbar.Add("Login successful!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Login failed. Please check your credentials.";
+            Snackbar.Add("Login failed", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+} 

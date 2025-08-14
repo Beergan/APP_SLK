@@ -1,0 +1,219 @@
+﻿@page "/"
+@using RuomRaCoffe.Admin
+<PageTitle>Dashboard</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
+    <!-- Welcome Section -->
+    <MudPaper Class="pa-6 mb-6" Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <MudGrid>
+            <MudItem xs="12" md="8">
+                <MudText Typo="Typo.h3" Class="mb-2">Welcome to RuomRa Coffee Admin</MudText>
+                <MudText Typo="Typo.body1" Class="mb-0">Manage your coffee shop operations efficiently</MudText>
+            </MudItem>
+            <MudItem xs="12" md="4" Class="d-flex justify-center align-center">
+                <MudIcon Icon="@Icons.Material.Filled.Coffee" Size="Size.Large" Style="opacity: 0.3; font-size: 4rem;" />
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Statistics Cards -->
+    <MudGrid Class="mb-6">
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Total Users</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(users?.Count ?? 0)</MudText>
+                        <MudText Typo="Typo.caption" Class="mb-0">Active accounts</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Total Products</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(products?.Count ?? 0)</MudText>
+                        <MudText Typo="Typo.caption" Class="mb-0">Available items</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Inventory" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Total Orders</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(orders?.Count ?? 0)</MudText>
+                        <MudText Typo="Typo.caption" Class="mb-0">Processed today</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.ShoppingCart" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Revenue</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">$@(totalRevenue?.ToString("N0") ?? "0")</MudText>
+                        <MudText Typo="Typo.caption" Class="mb-0">This month</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <!-- Quick Actions -->
+    <MudPaper Class="pa-4 mb-6">
+        <MudText Typo="Typo.h5" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.FlashOn" Class="mr-2" />
+            Quick Actions
+        </MudText>
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudButton Variant="Variant.Outlined" 
+                           FullWidth="true" 
+                           Class="pa-6" 
+                           Style="height: 100px; flex-direction: column;"
+                           OnClick="@(() => Navigation.NavigateTo("/staff"))">
+                    <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Class="mb-2" />
+                    <MudText>Manage Staff</MudText>
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudButton Variant="Variant.Outlined" 
+                           FullWidth="true" 
+                           Class="pa-6" 
+                           Style="height: 100px; flex-direction: column;"
+                           OnClick="@(() => Navigation.NavigateTo("/staff/checkin"))">
+                    <MudIcon Icon="@Icons.Material.Filled.Schedule" Size="Size.Large" Class="mb-2" />
+                    <MudText>Check In/Out</MudText>
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudButton Variant="Variant.Outlined" 
+                           FullWidth="true" 
+                           Class="pa-6" 
+                           Style="height: 100px; flex-direction: column;">
+                    <MudIcon Icon="@Icons.Material.Filled.Inventory" Size="Size.Large" Class="mb-2" />
+                    <MudText>Products</MudText>
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudButton Variant="Variant.Outlined" 
+                           FullWidth="true" 
+                           Class="pa-6" 
+                           Style="height: 100px; flex-direction: column;">
+                    <MudIcon Icon="@Icons.Material.Filled.Analytics" Size="Size.Large" Class="mb-2" />
+                    <MudText>Reports</MudText>
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Recent Activity & Notifications -->
+    <MudGrid>
+        <MudItem xs="12" md="8">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h5" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Timeline" Class="mr-2" />
+                    Recent Activity
+                </MudText>
+                <MudList T="object">
+                    <MudListItem>
+                        <MudAvatar Color="Color.Success" Class="mr-3">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" />
+                        </MudAvatar>
+                        <MudText Typo="Typo.body1">New order received</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">Order #1234 - 2 minutes ago</MudText>
+                    </MudListItem>
+                    <MudListItem>
+                        <MudAvatar Color="Color.Info" Class="mr-3">
+                            <MudIcon Icon="@Icons.Material.Filled.PersonAdd" />
+                        </MudAvatar>
+                        <MudText Typo="Typo.body1">New staff member added</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">John Doe - 15 minutes ago</MudText>
+                    </MudListItem>
+                    <MudListItem>
+                        <MudAvatar Color="Color.Warning" Class="mr-3">
+                            <MudIcon Icon="@Icons.Material.Filled.Inventory2" />
+                        </MudAvatar>
+                        <MudText Typo="Typo.body1">Low stock alert</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">Coffee beans - 1 hour ago</MudText>
+                    </MudListItem>
+                </MudList>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h5" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="mr-2" />
+                    Notifications
+                </MudText>
+                <MudList T="object">
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Success" Class="mr-2" />
+                        <MudText>System running smoothly</MudText>
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Warning" Class="mr-2" />
+                        <MudText>3 items low in stock</MudText>
+                    </MudListItem>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Info" Class="mr-2" />
+                        <MudText>5 new orders pending</MudText>
+                    </MudListItem>
+                </MudList>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    @if (isLoading)
+    {
+        <MudOverlay Visible="true" DarkBackground="true">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </MudOverlay>
+    }
+</MudContainer>
+
+@code {
+    private List<User>? users;
+    private List<dynamic>? products;
+    private List<dynamic>? orders;
+    private decimal? totalRevenue;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            users = await UserService.GetUsersAsync();
+            // TODO: Add ProductService and OrderService calls
+            isLoading = false;
+            Snackbar.Add("Dashboard loaded successfully!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            isLoading = false;
+            Snackbar.Add("Error loading dashboard data", Severity.Error);
+        }
+    }
+}

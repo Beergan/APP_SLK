@@ -1,0 +1,378 @@
+﻿@page "/staff"
+@using RuomRaCoffe.API.Services
+@using RuomRaCoffe.API.Data.Entities
+@using RuomRaCoffe.Shared.Dtos
+@inject StaffService StaffService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+<PageTitle>Staff Management</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
+    <!-- Header -->
+    <MudPaper Class="pa-6 mb-6" Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <MudGrid>
+            <MudItem xs="12" md="8">
+                <MudText Typo="Typo.h3" Class="mb-2">Staff Management</MudText>
+                <MudText Typo="Typo.body1" Class="mb-0">Manage your team efficiently</MudText>
+            </MudItem>
+            <MudItem xs="12" md="4" Class="d-flex justify-end align-center">
+                <MudButton Variant="Variant.Outlined" 
+                           Color="Color.Inherit" 
+                           Class="mr-2" 
+                           OnClick="@(() => Navigation.NavigateTo("/staff/checkin"))">
+                    <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="mr-2" />
+                    Check In/Out
+                </MudButton>
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Inherit" 
+                           OnClick="ShowCreateModal">
+                    <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+                    Thêm Nhân sự
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+    <!-- Statistics Cards -->
+    <MudGrid Class="mb-6">
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Total Staff</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(staffList?.Count ?? 0)</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Currently Working</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(staffList?.Count(s => s.IsCurrentlyWorking) ?? 0)</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Schedule" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">Active Staff</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(staffList?.Count(s => s.IsActive) ?? 0)</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="pa-4" Style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.caption" Class="mb-1">On Leave</MudText>
+                        <MudText Typo="Typo.h3" Class="mb-0">@(staffList?.Count(s => !s.IsCurrentlyWorking && s.IsActive) ?? 0)</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex justify-center align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.PersonOff" Size="Size.Large" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <!-- Filters -->
+    <MudPaper Class="pa-4 mb-6">
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudTextField @bind-Value="searchTerm" 
+                             Label="Search" 
+                             Variant="Variant.Outlined" 
+                             Adornment="Adornment.Start" 
+                             AdornmentIcon="@Icons.Material.Filled.Search" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudSelect @bind-Value="statusFilter" Label="Status" Variant="Variant.Outlined">
+                    <MudSelectItem Value="@("")">All</MudSelectItem>
+                    <MudSelectItem Value="@("working")">Currently Working</MudSelectItem>
+                    <MudSelectItem Value="@("active")">Active</MudSelectItem>
+                    <MudSelectItem Value="@("inactive")">Inactive</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudSelect @bind-Value="roleFilter" Label="Role" Variant="Variant.Outlined">
+                    <MudSelectItem Value="@("")">All Roles</MudSelectItem>
+                    <MudSelectItem Value="@("Admin")">Admin</MudSelectItem>
+                    <MudSelectItem Value="@("Manager")">Manager</MudSelectItem>
+                    <MudSelectItem Value="@("Staff")">Staff</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3" Class="d-flex align-center">
+                <MudButton Variant="Variant.Outlined" 
+                           Class="mr-2" 
+                           OnClick="ClearFilters">
+                    <MudIcon Icon="@Icons.Material.Filled.Refresh" Class="mr-2" />
+                    Clear
+                </MudButton>
+                <MudButton Variant="Variant.Filled" 
+                           OnClick="LoadStaff">
+                    <MudIcon Icon="@Icons.Material.Filled.Search" Class="mr-2" />
+                    Filter
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Staff Table -->
+    @if (isLoading)
+    {
+        <MudOverlay Visible="true" DarkBackground="true">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </MudOverlay>
+    }
+    else
+    {
+        <MudPaper Class="pa-4">
+            <MudTable Items="@filteredStaff" 
+                      Hover="true" 
+                      Striped="true" 
+                      Dense="true" 
+                      Loading="@isLoading"
+                      LoadingProgressColor="Color.Primary">
+                <HeaderContent>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Phone</MudTh>
+                    <MudTh>Role</MudTh>
+                    <MudTh>Status</MudTh>
+                    <MudTh>Last Check In</MudTh>
+                    <MudTh>Last Check Out</MudTh>
+                    <MudTh>Actions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudStack Row="true" AlignItems="AlignItems.Center">
+                            <MudAvatar Color="Color.Primary" Size="Size.Small">
+                                @context.Name.Substring(0, 1).ToUpper()
+                            </MudAvatar>
+                            <MudStack>
+                                <MudText Typo="Typo.body1">@context.Name</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    ID: @context.Id.ToString().Substring(0, 8)...
+                                </MudText>
+                            </MudStack>
+                        </MudStack>
+                    </MudTd>
+                    <MudTd>@context.Email</MudTd>
+                    <MudTd>@context.Phone</MudTd>
+                    <MudTd>
+                        <MudChip T= "string" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small">
+                            @context.Role
+                        </MudChip>
+                    </MudTd>
+                    <MudTd>
+                        @if (context.IsCurrentlyWorking)
+                        {
+                            <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">
+                                <MudIcon Icon="@Icons.Material.Filled.Schedule" Size="Size.Small" Class="mr-1" />
+                                Working
+                            </MudChip>
+                        }
+                        else if (context.IsActive)
+                        {
+                            <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">
+                                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1" />
+                                Available
+                            </MudChip>
+                        }
+                        else
+                        {
+                            <MudChip T="string" Color="Color.Error" Variant="Variant.Filled" Size="Size.Small">
+                                <MudIcon Icon="@Icons.Material.Filled.PersonOff" Size="Size.Small" Class="mr-1" />
+                                Inactive
+                            </MudChip>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        @if (context.LastCheckIn.HasValue)
+                        {
+                            <MudText Typo="Typo.caption">@context.LastCheckIn.Value.ToString("MM/dd/yyyy HH:mm")</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Never</MudText>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        @if (context.LastCheckOut.HasValue)
+                        {
+                            <MudText Typo="Typo.caption">@context.LastCheckOut.Value.ToString("MM/dd/yyyy HH:mm")</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Never</MudText>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        <MudStack Row="true" Spacing="1">
+                            <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
+                                          Color="Color.Primary" 
+                                          Size="Size.Small"
+                                          OnClick="@(() => ViewStaff(context.Id))" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                                          Color="Color.Primary" 
+                                          Size="Size.Small"
+                                          OnClick="@(() => EditStaff(context.Id))" />
+                            <MudIconButton Icon="@Icons.Material.Filled.History" 
+                                          Color="Color.Info" 
+                                          Size="Size.Small"
+                                          OnClick="@(() => ViewShiftHistory(context.Id))" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                          Color="Color.Error" 
+                                          Size="Size.Small"
+                                          OnClick="@(() => DeleteStaff(context.Id))" />
+                        </MudStack>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private List<StaffDto>? staffList;
+    private List<StaffDto>? filteredStaff;
+    private bool isLoading = true;
+    private string searchTerm = "";
+    private string statusFilter = "";
+    private string roleFilter = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStaff();
+    }
+
+    private async Task LoadStaff()
+    {
+        try
+        {
+            isLoading = true;
+            // TODO: Replace with actual API call when backend is ready
+            staffList = new List<StaffDto>
+            {
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "John Doe",
+                    Email = "john@example.com",
+                    Phone = "0123456789",
+                    Role = "Manager",
+                    IsActive = true,
+                    IsCurrentlyWorking = true,
+                    LastCheckIn = DateTime.Now.AddHours(-2),
+                    LastCheckOut = null,
+                    CreatedAt = DateTime.Now.AddDays(-30)
+                },
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Jane Smith",
+                    Email = "jane@example.com",
+                    Phone = "0987654321",
+                    Role = "Staff",
+                    IsActive = true,
+                    IsCurrentlyWorking = false,
+                    LastCheckIn = DateTime.Now.AddDays(-1),
+                    LastCheckOut = DateTime.Now.AddDays(-1).AddHours(8),
+                    CreatedAt = DateTime.Now.AddDays(-15)
+                }
+            };
+            ApplyFilters();
+            Snackbar.Add("Staff data loaded successfully!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Error loading staff data", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        if (staffList == null) return;
+
+        filteredStaff = staffList.AsEnumerable().ToList();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            filteredStaff = filteredStaff.Where(s => 
+                s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        if (!string.IsNullOrEmpty(statusFilter))
+        {
+            filteredStaff = statusFilter switch
+            {
+                "working" => filteredStaff.Where(s => s.IsCurrentlyWorking).ToList(),
+                "active" => filteredStaff.Where(s => s.IsActive).ToList(),
+                "inactive" => filteredStaff.Where(s => !s.IsActive).ToList(),
+                _ => filteredStaff
+            };
+        }
+
+        if (!string.IsNullOrEmpty(roleFilter))
+        {
+            filteredStaff = filteredStaff.Where(s => s.Role == roleFilter).ToList();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = "";
+        statusFilter = "";
+        roleFilter = "";
+        ApplyFilters();
+        Snackbar.Add("Filters cleared", Severity.Info);
+    }
+
+    private void ShowCreateModal()
+    {
+        Navigation.NavigateTo("/staff/create");
+    }
+
+    private void ViewStaff(Guid id)
+    {
+        Navigation.NavigateTo($"/staff/{id}");
+    }
+
+    private void EditStaff(Guid id)
+    {
+        Navigation.NavigateTo($"/staff/{id}/edit");
+    }
+
+    private void ViewShiftHistory(Guid id)
+    {
+        Navigation.NavigateTo($"/staff/{id}/shifts");
+    }
+
+    private async Task DeleteStaff(Guid id)
+    {
+        // TODO: Implement delete confirmation and API call
+        Snackbar.Add($"Delete staff with ID: {id}", Severity.Warning);
+    }
+} 

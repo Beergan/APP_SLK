@@ -1,0 +1,474 @@
+@page "/staff/checkin"
+@using RuomRaCoffe.Admin.Services
+@using RuomRaCoffe.API.Data.Entities
+@using RuomRaCoffe.Shared.Dtos
+@inject StaffService StaffService
+@inject NavigationManager Navigation
+
+<PageTitle>Staff Check In/Out</PageTitle>
+
+<div class="md-container">
+    <!-- Header -->
+    <div class="md-row md-mb-4">
+        <div class="md-col-12">
+            <div class="md-d-flex md-justify-content-between md-align-items-center">
+                <h1 class="md-d-flex md-align-items-center">
+                    <span class="material-icons md-font-size-2xl md-mb-0" style="margin-right: 0.5rem;">schedule</span>
+                    Staff Check In/Out
+                </h1>
+                <button class="md-btn md-btn-outlined md-mb-0" @onclick='() => Navigation.NavigateTo("/staff")'>
+                    <span class="material-icons" style="margin-right: 0.25rem;">arrow_back</span>
+                    Back to Staff
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Time Display -->
+    <div class="md-row md-mb-4">
+        <div class="md-col-12">
+            <div class="md-card" style="background: linear-gradient(135deg, var(--md-primary), var(--md-primary-dark)); color: white;">
+                <div class="md-card-body md-text-center">
+                    <h2 class="md-mb-0">@currentTime.ToString("dddd, MMMM dd, yyyy")</h2>
+                    <h1 class="md-font-size-4xl md-mb-0">@currentTime.ToString("HH:mm:ss")</h1>
+                    <small>@currentTime.ToString("tt")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Check In/Out -->
+    <div class="md-row md-mb-4">
+        <div class="md-col-6">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">search</span>
+                        Find Staff
+                    </h5>
+                </div>
+                <div class="md-card-body">
+                    <div class="md-text-field">
+                        <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder=" " />
+                        <label>Search Staff</label>
+                    </div>
+                    <div class="md-text-field">
+                        <select @bind="selectedStaffId">
+                            <option value="">Choose staff member...</option>
+                            @if (staffList != null)
+                            {
+                                @foreach (var staff in filteredStaff)
+                                {
+                                    <option value="@staff.Id">@staff.Name - @staff.Role</option>
+                                }
+                            }
+                        </select>
+                        <label>Or Select from List</label>
+                    </div>
+                    <button class="md-btn md-btn-primary" style="width: 100%;" @onclick="FindStaff">
+                        <span class="material-icons" style="margin-right: 0.25rem;">search</span>
+                        Find Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="md-col-6">
+            @if (selectedStaff != null)
+            {
+                <div class="md-card">
+                    <div class="md-card-header">
+                        <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                            <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">person</span>
+                            Staff Information
+                        </h5>
+                    </div>
+                    <div class="md-card-body">
+                        <div class="md-row">
+                            <div class="md-col-3">
+                                <div class="md-avatar md-avatar-lg md-mb-0" style="margin: 0 auto 1rem auto; display: block;">
+                                    @selectedStaff.Name.Substring(0, 1).ToUpper()
+                                </div>
+                            </div>
+                            <div class="md-col-9">
+                                <h5>@selectedStaff.Name</h5>
+                                <p style="color: var(--md-gray-600); margin-bottom: 0.25rem;">@selectedStaff.Email</p>
+                                <p style="color: var(--md-gray-600); margin-bottom: 0.5rem;">@selectedStaff.Phone</p>
+                                <span class="md-chip md-chip-primary">@selectedStaff.Role</span>
+                            </div>
+                        </div>
+                        <div class="md-divider"></div>
+                        <div class="md-row">
+                            <div class="md-col-6">
+                                <small style="color: var(--md-gray-600);">Status</small>
+                                <div>
+                                    @if (selectedStaff.IsCurrentlyWorking)
+                                    {
+                                        <span class="md-badge md-badge-success">Currently Working</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="md-badge md-badge-warning">Available</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="md-col-6">
+                                <small style="color: var(--md-gray-600);">Last Check In</small>
+                                <div>
+                                    @if (selectedStaff.LastCheckIn.HasValue)
+                                    {
+                                        <small>@selectedStaff.LastCheckIn.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                    }
+                                    else
+                                    {
+                                        <small style="color: var(--md-gray-500);">Never</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Check In/Out Actions -->
+    @if (selectedStaff != null)
+    {
+        <div class="md-row md-mb-4">
+            <div class="md-col-12">
+                <div class="md-card">
+                    <div class="md-card-header">
+                        <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                            <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">history</span>
+                            Check In/Out Actions
+                        </h5>
+                    </div>
+                    <div class="md-card-body">
+                        <div class="md-row">
+                            <div class="md-col-6">
+                                <div class="md-text-field">
+                                    <textarea @bind="note" rows="3" placeholder=" "></textarea>
+                                    <label>Note (Optional)</label>
+                                </div>
+                            </div>
+                            <div class="md-col-6">
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    @if (selectedStaff.IsCurrentlyWorking)
+                                    {
+                                        <button class="md-btn md-btn-error" style="height: 48px;" @onclick="CheckOut">
+                                            <span class="material-icons" style="margin-right: 0.25rem;">logout</span>
+                                            Check Out
+                                        </button>
+                                        <small style="color: var(--md-gray-600); text-align: center;">
+                                            Staff is currently working. Click to check out.
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <button class="md-btn md-btn-success" style="height: 48px;" @onclick="CheckIn">
+                                            <span class="material-icons" style="margin-right: 0.25rem;">login</span>
+                                            Check In
+                                        </button>
+                                        <small style="color: var(--md-gray-600); text-align: center;">
+                                            Staff is available. Click to check in.
+                                        </small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Recent Activity -->
+    <div class="md-row">
+        <div class="md-col-12">
+            <div class="md-card">
+                <div class="md-card-header">
+                    <h5 class="md-mb-0 md-d-flex md-align-items-center">
+                        <span class="material-icons md-mb-0" style="margin-right: 0.5rem;">activity</span>
+                        Recent Check In/Out Activity
+                    </h5>
+                </div>
+                <div class="md-card-body">
+                    @if (isLoadingRecent)
+                    {
+                        <div class="md-loading">
+                            <div class="md-spinner"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="overflow-x: auto;">
+                            <table class="md-table">
+                                <thead>
+                                    <tr>
+                                        <th>Staff</th>
+                                        <th>Action</th>
+                                        <th>Time</th>
+                                        <th>Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (recentActivity != null)
+                                    {
+                                        @foreach (var activity in recentActivity)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="md-d-flex md-align-items-center">
+                                                        <div class="md-avatar md-mb-0" style="margin-right: 0.5rem;">
+                                                            @activity.UserName.Substring(0, 1).ToUpper()
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="md-mb-0">@activity.UserName</h6>
+                                                            <small style="color: var(--md-gray-600);">@activity.UserId.ToString().Substring(0, 8)...</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if (activity.CheckOutTime.HasValue)
+                                                    {
+                                                        <span class="md-badge md-badge-error">Check Out</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="md-badge md-badge-success">Check In</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (activity.CheckOutTime.HasValue)
+                                                    {
+                                                        <small>@activity.CheckOutTime.Value.ToString("MM/dd/yyyy HH:mm")</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small>@activity.CheckInTime.ToString("MM/dd/yyyy HH:mm")</small>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(activity.Note))
+                                                    {
+                                                        <small>@activity.Note</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <small style="color: var(--md-gray-500);">No note</small>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<StaffDto>? staffList;
+    private List<StaffDto>? filteredStaff;
+    private StaffDto? selectedStaff;
+    private List<ShiftRecordDto>? recentActivity;
+    private bool isLoadingRecent = true;
+    private string searchTerm = "";
+    private Guid selectedStaffId;
+    private string note = "";
+    private DateTime currentTime = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStaff();
+        await LoadRecentActivity();
+        StartTimer();
+    }
+
+    private void StartTimer()
+    {
+        var timer = new System.Threading.Timer(_ =>
+        {
+            currentTime = DateTime.Now;
+            InvokeAsync(StateHasChanged);
+        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+    }
+
+    private async Task LoadStaff()
+    {
+        try
+        {
+            // TODO: Replace with actual API call
+            staffList = new List<StaffDto>
+            {
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "John Doe",
+                    Email = "john@example.com",
+                    Phone = "0123456789",
+                    Role = "Manager",
+                    IsActive = true,
+                    IsCurrentlyWorking = true,
+                    LastCheckIn = DateTime.Now.AddHours(-2),
+                    LastCheckOut = null,
+                    CreatedAt = DateTime.Now.AddDays(-30)
+                },
+                new StaffDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Jane Smith",
+                    Email = "jane@example.com",
+                    Phone = "0987654321",
+                    Role = "Staff",
+                    IsActive = true,
+                    IsCurrentlyWorking = false,
+                    LastCheckIn = DateTime.Now.AddDays(-1),
+                    LastCheckOut = DateTime.Now.AddDays(-1).AddHours(8),
+                    CreatedAt = DateTime.Now.AddDays(-15)
+                }
+            };
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading staff: {ex.Message}");
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        if (staffList == null) return;
+
+        filteredStaff = staffList.ToList();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            filteredStaff = filteredStaff.Where(s => 
+                s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        filteredStaff = filteredStaff.ToList();
+    }
+
+    private async Task LoadRecentActivity()
+    {
+        try
+        {
+            isLoadingRecent = true;
+            // TODO: Replace with actual API call
+            recentActivity = new List<ShiftRecordDto>
+            {
+                new ShiftRecordDto
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
+                    UserName = "John Doe",
+                    CheckInTime = DateTime.Now.AddHours(-2),
+                    CheckOutTime = null,
+                    Note = "Morning shift",
+                    CreatedAt = DateTime.Now.AddHours(-2)
+                },
+                new ShiftRecordDto
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
+                    UserName = "Jane Smith",
+                    CheckInTime = DateTime.Now.AddDays(-1),
+                    CheckOutTime = DateTime.Now.AddDays(-1).AddHours(8),
+                    Note = "Regular shift",
+                    CreatedAt = DateTime.Now.AddDays(-1)
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading recent activity: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingRecent = false;
+        }
+    }
+
+    private void FindStaff()
+    {
+        if (selectedStaffId != Guid.Empty)
+        {
+            selectedStaff = staffList?.FirstOrDefault(s => s.Id == selectedStaffId);
+        }
+        else if (!string.IsNullOrEmpty(searchTerm))
+        {
+            selectedStaff = filteredStaff?.FirstOrDefault();
+        }
+    }
+
+    private async Task CheckIn()
+    {
+        if (selectedStaff == null) return;
+
+        try
+        {
+            // TODO: Implement actual API call
+            // await StaffService.CheckInAsync(selectedStaff.Id, note);
+            
+            // Update local state
+            selectedStaff.IsCurrentlyWorking = true;
+            selectedStaff.LastCheckIn = DateTime.Now;
+            
+            // Clear form
+            note = "";
+            selectedStaff = null;
+            selectedStaffId = Guid.Empty;
+            
+            // Reload data
+            await LoadStaff();
+            await LoadRecentActivity();
+            
+            // TODO: Show success message
+            Console.WriteLine("Check in successful");
+        }
+        catch (Exception ex)
+        {
+            // TODO: Show error message
+            Console.WriteLine($"Check in failed: {ex.Message}");
+        }
+    }
+
+    private async Task CheckOut()
+    {
+        if (selectedStaff == null) return;
+
+        try
+        {
+            // TODO: Implement actual API call
+            // await StaffService.CheckOutAsync(selectedStaff.Id, note);
+            
+            // Update local state
+            selectedStaff.IsCurrentlyWorking = false;
+            selectedStaff.LastCheckOut = DateTime.Now;
+            
+            // Clear form
+            note = "";
+            selectedStaff = null;
+            selectedStaffId = Guid.Empty;
+            
+            // Reload data
+            await LoadStaff();
+            await LoadRecentActivity();
+            
+            // TODO: Show success message
+            Console.WriteLine("Check out successful");
+        }
+        catch (Exception ex)
+        {
+            // TODO: Show error message
+            Console.WriteLine($"Check out failed: {ex.Message}");
+        }
+    }
+} 
