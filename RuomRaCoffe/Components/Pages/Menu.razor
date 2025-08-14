@@ -1,0 +1,158 @@
+@page "/menu"
+@using RuomRaCoffe.Shared.Dtos
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<PageTitle>Menu - RuomRaCoffe</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <!-- Header -->
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+            <MudStack>
+                <MudText Typo="Typo.h4" Class="d-flex align-center">
+                    <MudIcon Icon="@Icons.Material.Filled.LocalCafe" Class="mr-3" />
+                    Menu
+                </MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Chọn đồ uống yêu thích của bạn
+                </MudText>
+            </MudStack>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.ShoppingCart"
+                       OnClick="@(() => Navigation.NavigateTo("/cart"))">
+                Giỏ hàng (@cartItems.Count)
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+
+    <!-- Categories -->
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6" Class="mb-3">Danh mục</MudText>
+        <MudChipSet Filter="true" @bind-SelectedChips="selectedCategories">
+            @foreach (var category in categories)
+            {
+                <MudChip Value="@category" Color="Color.Primary">@category</MudChip>
+            }
+        </MudChipSet>
+    </MudPaper>
+
+    <!-- Products Grid -->
+    @if (isLoading)
+    {
+        <MudStack AlignItems="AlignItems.Center" Class="pa-8">
+            <MudProgressCircular Indeterminate="true" />
+            <MudText Typo="Typo.body2" Class="mt-2">Đang tải menu...</MudText>
+        </MudStack>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var product in filteredProducts)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard>
+                        <MudCardMedia Image="@product.ImageUrl" Height="200" />
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6">@product.Name</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                @product.Description
+                            </MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Primary">
+                                @product.Price.ToString("N0") VNĐ
+                            </MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       OnClick="@(() => AddToCart(product))">
+                                Thêm vào giỏ
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    private List<Product> products = new();
+    private List<Product> filteredProducts = new();
+    private List<string> categories = new();
+    private List<string> selectedCategories = new();
+    private List<CartItem> cartItems = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+        LoadCategories();
+    }
+
+    private async Task LoadProducts()
+    {
+        try
+        {
+            isLoading = true;
+            // TODO: Load products from API
+            // products = await Http.GetFromJsonAsync<List<Product>>("api/Products");
+            
+            // Mock data for now
+            products = new List<Product>
+            {
+                new Product { Id = Guid.NewGuid(), Name = "Cà phê đen", Description = "Cà phê đen truyền thống", Price = 25000, Category = "Cà phê", ImageUrl = "coffee1.jpg" },
+                new Product { Id = Guid.NewGuid(), Name = "Cà phê sữa", Description = "Cà phê sữa đặc", Price = 30000, Category = "Cà phê", ImageUrl = "coffee2.jpg" },
+                new Product { Id = Guid.NewGuid(), Name = "Trà sữa trân châu", Description = "Trà sữa với trân châu", Price = 45000, Category = "Trà sữa", ImageUrl = "milk_tea1.jpg" },
+                new Product { Id = Guid.NewGuid(), Name = "Nước ép cam", Description = "Nước ép cam tươi", Price = 35000, Category = "Nước ép", ImageUrl = "juice1.jpg" }
+            };
+            
+            filteredProducts = products;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Lỗi tải menu: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void LoadCategories()
+    {
+        categories = products.Select(p => p.Category).Distinct().ToList();
+    }
+
+    private void AddToCart(Product product)
+    {
+        var existingItem = cartItems.FirstOrDefault(item => item.ProductId == product.Id);
+        
+        if (existingItem != null)
+        {
+            existingItem.Quantity++;
+        }
+        else
+        {
+            cartItems.Add(new CartItem
+            {
+                ProductId = product.Id,
+                ProductName = product.Name,
+                Price = product.Price,
+                Quantity = 1
+            });
+        }
+        
+        Snackbar.Add($"Đã thêm {product.Name} vào giỏ hàng", Severity.Success);
+    }
+
+    public class CartItem
+    {
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+    }
+} 
