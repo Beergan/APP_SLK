@@ -41,7 +41,7 @@ public class StaffService
         }
     }
 
-    public async Task<User> CreateStaffAsync(User createStaffDto)
+    public async Task<User> CreateStaffAsync(CreateStaffDto createStaffDto)
     {
         try
         {
@@ -64,7 +64,6 @@ public class StaffService
             throw new Exception($"Failed to create staff: {ex.Message}");
         }
     }
-
 
     public async Task<User> UpdateStaffAsync(Guid id, UpdateStaffDto updateStaffDto)
     {

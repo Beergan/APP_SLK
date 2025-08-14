@@ -117,11 +117,11 @@
 @code {
     private MudForm form;
     private bool isLoading = false;
-    public UserModel staffModel = new UserModel();
+    public StaffModel staffModel = new StaffModel();
     private StaffModelFluentValidator staffValidator = new();
 
 
-    public class StaffModelFluentValidator : AbstractValidator<UserModel>
+    public class StaffModelFluentValidator : AbstractValidator<StaffModel>
     {
         public StaffModelFluentValidator()
         {
@@ -136,8 +136,8 @@
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
 {
    var result = await ValidateAsync(
-       ValidationContext<UserModel>.CreateWithOptions(
-           (UserModel)model,
+       ValidationContext<StaffModel>.CreateWithOptions(
+           (StaffModel)model,
            x => x.IncludeProperties(propertyName)
        )
    );
@@ -167,7 +167,7 @@
 
             isLoading = true;
 
-            var createStaffDto = new User
+            var createStaffDto = new CreateStaffDto
             {
                 Name = staffModel.Name,
                 Email = staffModel.Email,
@@ -201,7 +201,7 @@
                 if (dialog == true)
                 {
                     // Reset form để tạo nhân sự mới
-                    staffModel = new UserModel();
+                    staffModel = new StaffModel();
                     await form.ResetAsync();
                 }
                 else if (dialog == false)
@@ -220,5 +220,14 @@
         }
     }
 
-  
+    public class StaffModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Role { get; set; } = "Staff";
+        public string Address { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
 }

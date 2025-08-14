@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using RuomRaCoffe.API.Data;
 using RuomRaCoffe.API.Data.Entities;
-using RuomRaCoffe.Shared;
 using RuomRaCoffe.Shared.Dtos;
 
-namespace RuomRaCoffe.Admin.Controllers
+namespace RuomRaCoffe.API.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
@@ -246,4 +245,4 @@ namespace RuomRaCoffe.Admin.Controllers
             }
         }
     }
-}
+} 
