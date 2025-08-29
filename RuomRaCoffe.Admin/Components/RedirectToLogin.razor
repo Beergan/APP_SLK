@@ -1,0 +1,15 @@
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JS.InvokeAsync<string>("localStorage.getItem", "jwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavManager.NavigateTo("/login", true);
+            }
+        }
+    }
+}

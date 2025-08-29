@@ -89,7 +89,6 @@ namespace RuomRaCoffe.API.Controllers
                 return StatusCode(500, new { error = "Internal server error", message = ex.Message });
             }
         }
-
         [HttpPost("staff")]
         public async Task<IActionResult> CreateStaff([FromBody] CreateStaffDto createStaffDto)
         {
@@ -98,13 +97,11 @@ namespace RuomRaCoffe.API.Controllers
                 if (createStaffDto == null)
                     return BadRequest(new { error = "Staff data is required" });
 
-                // Validate email uniqueness
                 if (await _context.Users.AnyAsync(u => u.Email == createStaffDto.Email))
                 {
                     return BadRequest(new { error = "Email already exists" });
                 }
 
-                // Create new user
                 var newUser = new User
                 {
                     Id = Guid.NewGuid(),
@@ -117,13 +114,11 @@ namespace RuomRaCoffe.API.Controllers
                     UpdatedAt = DateTime.Now
                 };
 
-                // Hash password
                 newUser.Password = _passwordHasher.HashPassword(newUser, createStaffDto.Password);
 
                 _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
 
-                // Return user without password
                 var responseUser = new
                 {
                     newUser.Id,

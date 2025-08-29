@@ -1,12 +1,12 @@
 ﻿@page "/staff"
 @using RuomRaCoffe.Admin.Services
-@using RuomRaCoffe.API.Data.Entities
 @using RuomRaCoffe.Shared.Dtos
 @inject StaffService StaffService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 <PageTitle>Staff Management</PageTitle>
+
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <!-- Header -->
@@ -125,11 +125,11 @@
                     <MudIcon Icon="@Icons.Material.Filled.Refresh" Class="mr-2" />
                     Clear
                 </MudButton>
-                <MudButton Variant="Variant.Filled" 
+               @*  <MudButton Variant="Variant.Filled" 
                            OnClick="LoadStaff">
                     <MudIcon Icon="@Icons.Material.Filled.Search" Class="mr-2" />
                     Filter
-                </MudButton>
+                </MudButton> *@
             </MudItem>
         </MudGrid>
     </MudPaper>
@@ -257,7 +257,6 @@
     private string searchTerm = "";
     private string statusFilter = "";
     private string roleFilter = "";
-
     protected override async Task OnInitializedAsync()
     {
         await LoadStaff();
@@ -268,36 +267,13 @@
         try
         {
             isLoading = true;
-            // TODO: Replace with actual API call when backend is ready
-            staffList = new List<StaffDto>
+            List<StaffDto> users = await StaffService.GetStaffAsync();
+            staffList = users.Select( u => new StaffDto
             {
-                new StaffDto
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "John Doe",
-                    Email = "john@example.com",
-                    Phone = "0123456789",
-                    Role = "Manager",
-                    IsActive = true,
-                    IsCurrentlyWorking = true,
-                    LastCheckIn = DateTime.Now.AddHours(-2),
-                    LastCheckOut = null,
-                    CreatedAt = DateTime.Now.AddDays(-30)
-                },
-                new StaffDto
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Jane Smith",
-                    Email = "jane@example.com",
-                    Phone = "0987654321",
-                    Role = "Staff",
-                    IsActive = true,
-                    IsCurrentlyWorking = false,
-                    LastCheckIn = DateTime.Now.AddDays(-1),
-                    LastCheckOut = DateTime.Now.AddDays(-1).AddHours(8),
-                    CreatedAt = DateTime.Now.AddDays(-15)
-                }
-            };
+                Id = u.Id,
+                Email = u.Email,
+                Name = u.Name
+            }).ToList();
             ApplyFilters();
             Snackbar.Add("Staff data loaded successfully!", Severity.Success);
         }

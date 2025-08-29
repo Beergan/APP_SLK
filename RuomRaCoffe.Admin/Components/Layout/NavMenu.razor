@@ -26,11 +26,20 @@
             Weather
         </MudNavLink>
     </MudNavGroup>
-    
     <MudDivider Class="my-4" />
-    
-    <MudNavLink Href="logout" Icon="@Icons.Material.Filled.Logout" Color="Color.Error">
+    <MudNavLink OnClick="@Logout"  Icon="@Icons.Material.Filled.Logout" Color="Color.Error">
         Logout
     </MudNavLink>
 </MudNavMenu>
 
+@code {
+    [Inject] IJSRuntime JS { get; set; } = default!;
+    [Inject] NavigationManager NavManager { get; set; } = default!;
+
+    private async Task Logout()
+    {
+        await JS.InvokeVoidAsync("localStorage.removeItem", "jwtToken");
+
+        NavManager.NavigateTo("/login", true);
+    }
+}

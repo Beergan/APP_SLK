@@ -1,13 +1,12 @@
 ﻿@page "/staff/create"
 @using RuomRaCoffe.Admin.Services
-@using RuomRaCoffe.API.Data.Entities
 @using RuomRaCoffe.Shared.Dtos
-@using RuomRaCoffe.Shared.Models
 @inject StaffService StaffService
 @inject NavigationManager Navigation
 @using FluentValidation
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@attribute [Authorize]
 <PageTitle>Staff Management</PageTitle>
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudCard>
@@ -97,7 +96,7 @@
                 <MudSpacer />
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
-                           OnClick="@(async () => await CreateStaffs())"
+                         @*   OnClick="@(async () => await CreateStaffs())" *@
                            Disabled="@isLoading"
                            StartIcon="@Icons.Material.Filled.Save">
                     @if (isLoading)
@@ -152,73 +151,73 @@
    
 
 
-    private async Task CreateStaffs()
-    {
-        try
-        {
-            // Validate form
-            await form.Validate();
+    // private async Task CreateStaffs()
+    // {
+    //     try
+    //     {
+    //         // Validate form
+    //         await form.Validate();
 
-            if (!form.IsValid)
-            {
-                Snackbar.Add("Please fix validation errors", MudBlazor.Severity.Warning);
-                return;
-            }
+    //         if (!form.IsValid)
+    //         {
+    //             Snackbar.Add("Please fix validation errors", MudBlazor.Severity.Warning);
+    //             return;
+    //         }
 
-            isLoading = true;
+    //         isLoading = true;
 
-            var createStaffDto = new CreateStaffDto
-            {
-                Name = staffModel.Name,
-                Email = staffModel.Email,
-                Phone = staffModel.Phone,
-                Role = staffModel.Role,
-                Address = staffModel.Address,
-                Password = staffModel.Password // Lưu ý: Password sẽ được hash ở API
-            };
+    //         var createStaffDto = new CreateStaffDto
+    //         {
+    //             Name = staffModel.Name,
+    //             Email = staffModel.Email,
+    //             Phone = staffModel.Phone,
+    //             Role = staffModel.Role,
+    //             Address = staffModel.Address,
+    //             Password = staffModel.Password // Lưu ý: Password sẽ được hash ở API
+    //         };
 
-            var createdStaff = await StaffService.CreateStaffAsync(createStaffDto);
+    //         var createdStaff = await StaffService.CreateStaffAsync(createStaffDto);
 
-            if (createdStaff != null)
-            {
-                Snackbar.Add($"Staff '{createdStaff.Name}' created successfully!", MudBlazor.Severity.Success);
+    //         if (createdStaff != null)
+    //         {
+    //             Snackbar.Add($"Staff '{createdStaff.Name}' created successfully!", MudBlazor.Severity.Success);
 
-                var parameters = new DialogParameters
-                {
-                    ["ContentText"] = $"Staff '{createdStaff.Name}' has been created successfully. Would you like to create another staff member?",
-                    ["ButtonText"] = "Create Another",
-                    ["Color"] = Color.Primary
-                };
+    //             var parameters = new DialogParameters
+    //             {
+    //                 ["ContentText"] = $"Staff '{createdStaff.Name}' has been created successfully. Would you like to create another staff member?",
+    //                 ["ButtonText"] = "Create Another",
+    //                 ["Color"] = Color.Primary
+    //             };
 
-                var dialog = await DialogService.ShowMessageBox(
-                    "Success",
-                    $"Staff '{createdStaff.Name}' created successfully!",
-                    yesText: "Create Another",
-                    noText: "Go to Staff List",
-                    cancelText: "Stay Here"
-                );
+    //             var dialog = await DialogService.ShowMessageBox(
+    //                 "Success",
+    //                 $"Staff '{createdStaff.Name}' created successfully!",
+    //                 yesText: "Create Another",
+    //                 noText: "Go to Staff List",
+    //                 cancelText: "Stay Here"
+    //             );
 
-                if (dialog == true)
-                {
-                    // Reset form để tạo nhân sự mới
-                    staffModel = new StaffModel();
-                    await form.ResetAsync();
-                }
-                else if (dialog == false)
-                {
-                    Navigation.NavigateTo("/staff");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error creating staff: {ex.Message}", MudBlazor.Severity.Error);
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
+    //             if (dialog == true)
+    //             {
+    //                 // Reset form để tạo nhân sự mới
+    //                 staffModel = new StaffModel();
+    //                 await form.ResetAsync();
+    //             }
+    //             else if (dialog == false)
+    //             {
+    //                 Navigation.NavigateTo("/staff");
+    //             }
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Snackbar.Add($"Error creating staff: {ex.Message}", MudBlazor.Severity.Error);
+    //     }
+    //     finally
+    //     {
+    //         isLoading = false;
+    //     }
+    // }
 
     public class StaffModel
     {

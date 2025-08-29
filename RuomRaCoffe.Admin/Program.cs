@@ -1,48 +1,37 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using RuomRaCoffe.Admin.API;
-using RuomRaCoffe.Admin.Services;
-using RuomRaCoffe.API.Data.Entities;
 using MudBlazor.Services;
-
+using RuomRaCoffe.Admin.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
-// MudBlazor
 builder.Services.AddMudServices();
-
-// HTTP Client
-builder.Services.AddHttpClient("API", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7110/");
-});
-
-// Services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<StaffService>();
+builder.Services.AddHttpContextAccessor(); // quan trọng để SignInAsync
 
-// Add services to the container
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+// CookieAuth dùng để quản lý session trên web
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
     {
-        options.LoginPath = "/login";
-        options.LogoutPath = "/logout";
-        options.AccessDeniedPath = "/access-denied";
+        options.LoginPath = "/Login";
+        options.AccessDeniedPath = "/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
     });
 
-builder.Services.AddAuthorization(options =>
+builder.Services.AddAuthorization();
+
+// HTTP Client gọi API
+builder.Services.AddHttpClient("API", client =>
 {
-    options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Admin"));
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7032/");
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -51,12 +40,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-builder.Services.AddMudServices();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Blazor Hub
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

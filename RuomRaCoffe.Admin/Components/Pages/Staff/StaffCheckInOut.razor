@@ -1,10 +1,9 @@
 @page "/staff/checkin"
 @using RuomRaCoffe.Admin.Services
-@using RuomRaCoffe.API.Data.Entities
 @using RuomRaCoffe.Shared.Dtos
 @inject StaffService StaffService
 @inject NavigationManager Navigation
-
+@attribute [Authorize]
 <PageTitle>Staff Check In/Out</PageTitle>
 
 <div class="md-container">
