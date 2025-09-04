@@ -4,15 +4,14 @@ using RuomRaCoffe.Admin.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using RuomRaCoffe.Admin.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<StaffService>();
-builder.Services.AddHttpContextAccessor(); // quan trọng để SignInAsync
+builder.Services.AddMyAppServices();
+builder.Services.AddHttpContextAccessor(); 
 
-// CookieAuth dùng để quản lý session trên web
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
@@ -24,7 +23,6 @@ builder.Services.AddAuthentication("CookieAuth")
 
 builder.Services.AddAuthorization();
 
-// HTTP Client gọi API
 builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7032/");
